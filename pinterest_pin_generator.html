@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinterest Pin Generator 🍋</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Dancing+Script:wght@700&family=Oswald:wght@700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --y:#e8c900;--yl:#fef9c3;--yd:#a68f00;
+  --g:#5a7a4a;--gl:#edf4e8;
+  --tx:#1a1a1a;--txm:#6b6b6b;--bd:#e0ddd5;
+  --bg:#fafaf7;--card:#fff;--r:12px;--rs:8px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+.hdr{background:var(--card);border-bottom:1px solid var(--bd);padding:13px 24px;display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:100}
+.logo{width:36px;height:36px;background:var(--y);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.hdr h1{font-size:16px;font-weight:600}
+.hdr p{font-size:11px;color:var(--txm)}
+.main{display:grid;grid-template-columns:370px 1fr;min-height:calc(100vh - 63px)}
+.sb{background:var(--card);border-right:1px solid var(--bd);padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;height:calc(100vh - 63px);position:sticky;top:63px}
+.sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:5px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:13px;font-weight:500}
+.f small{font-size:11px;color:var(--txm);line-height:1.4}
+input[type="text"],input[type="password"],textarea,select{width:100%;padding:7px 10px;border:1px solid var(--bd);border-radius:var(--rs);font-size:13px;font-family:inherit;background:var(--bg);color:var(--tx);outline:none;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(232,201,0,.13)}
+textarea{resize:vertical;line-height:1.55}
+.kw{position:relative}
+.kw input{padding-right:30px}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--txm)}
+.div{height:1px;background:var(--bd)}
+.tabs2{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden}
+.tab2{padding:7px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--txm);transition:all .15s;text-align:center}
+.tab2.on{background:var(--y);color:#2a2000}
+.hint{background:var(--yl);border:1px solid var(--y);border-radius:var(--rs);padding:8px 10px;font-size:11px;line-height:1.5;color:#5a4800}
+.hint code{background:rgba(0,0,0,.07);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:10px}
+.btn-gen{width:100%;padding:11px;background:var(--y);color:#2a2000;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
+.btn-gen:hover{background:#d4b600}
+.btn-gen:disabled{opacity:.5;cursor:not-allowed}
+.prog{background:var(--yl);border:1px solid var(--y);border-radius:var(--rs);padding:10px 12px;display:none}
+.prog.on{display:block}
+.prog-lbl{font-size:12px;font-weight:600;margin-bottom:5px}
+.prog-track{height:5px;background:rgba(0,0,0,.1);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--yd);border-radius:3px;transition:width .3s;width:0}
+.prog-sub{font-size:11px;color:var(--txm);margin-top:4px}
+/* photo */
+.drop-zone{border:2px dashed var(--bd);border-radius:var(--rs);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:var(--bg)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--y);background:var(--yl)}
+.drop-zone p{font-size:12px;color:var(--txm);margin-top:4px}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
+.thumb{position:relative;aspect-ratio:1;border-radius:5px;overflow:hidden;background:var(--bg);border:1px dashed var(--bd)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-del{position:absolute;top:2px;right:2px;width:17px;height:17px;background:rgba(0,0,0,.55);border:none;border-radius:50%;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ltabs{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.ltab{padding:4px 8px;font-size:11px;border:1px solid var(--bd);border-radius:5px;background:none;cursor:pointer;color:var(--txm);transition:all .15s}
+.ltab.on{background:var(--y);border-color:var(--y);color:#2a2000;font-weight:600}
+.toggle-row{display:flex;align-items:center;gap:7px;cursor:pointer}
+.sw{position:relative;width:34px;height:19px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;background:var(--bd);border-radius:20px;transition:.2s;cursor:pointer}
+.sw span:before{content:'';position:absolute;width:13px;height:13px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+span{background:var(--y)}
+.sw input:checked+span:before{transform:translateX(15px)}
+/* results */
+.res{padding:20px;overflow-y:auto}
+.res-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.res-hdr h2{font-size:16px;font-weight:600}
+.res-btns{display:flex;gap:7px}
+.btn-exp{padding:7px 13px;background:var(--gl);border:1px solid var(--g);border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;color:var(--g)}
+.btn-exp:hover{background:var(--g);color:#fff}
+.btn-sec{padding:7px 13px;background:none;border:1px solid var(--bd);border-radius:var(--rs);font-size:12px;cursor:pointer;color:var(--txm)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:13px}
+.pin{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;transition:box-shadow .15s}
+.pin:hover{box-shadow:0 3px 16px rgba(0,0,0,.08)}
+.pin-img{aspect-ratio:2/3;background:#f5e6d8;position:relative;overflow:hidden}
+.pin-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pin-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--txm);font-size:11px;padding:8px;text-align:center}
+.pin-ph svg{width:28px;height:28px;opacity:.3}
+.spin{width:20px;height:20px;border:2px solid rgba(232,201,0,.3);border-top-color:var(--yd);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.bdg{position:absolute;top:6px;right:6px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600}
+.s-pending,.s-queued{background:rgba(255,255,255,.85);color:#888}
+.s-generating{background:var(--yl);color:var(--yd)}
+.s-done{background:var(--gl);color:var(--g)}
+.s-error{background:#fde8e8;color:#c0392b}
+.pin-body{padding:8px 10px 10px}
+.pin-num{font-size:10px;color:var(--txm);margin-bottom:2px}
+.pin-ttl{font-size:12px;font-weight:500;line-height:1.4;margin-bottom:6px}
+.ptog{font-size:10px;color:var(--yd);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:block;margin-bottom:4px}
+.pbox{font-size:10px;line-height:1.5;color:var(--txm);background:var(--bg);border-radius:5px;padding:6px 8px;margin-bottom:6px;display:none;user-select:all}
+.pbox.open{display:block}
+.pin-acts{display:flex;gap:5px}
+.btn-rg{flex:1;padding:6px 8px;background:none;border:1px solid var(--bd);border-radius:6px;font-size:11px;cursor:pointer;color:var(--txm);display:flex;align-items:center;justify-content:center;gap:3px;transition:all .15s}
+.btn-rg:hover{border-color:var(--y);color:var(--yd);background:var(--yl)}
+.btn-rg:disabled{opacity:.4;cursor:not-allowed}
+.btn-dl{padding:6px 9px;background:none;border:1px solid var(--bd);border-radius:6px;font-size:11px;cursor:pointer;color:var(--txm)}
+.btn-dl:hover{border-color:var(--g);color:var(--g)}
+.empty{grid-column:1/-1;text-align:center;padding:55px 20px;color:var(--txm)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;pointer-events:none;opacity:0;transition:opacity .3s;z-index:999}
+.toast.on{opacity:1}
+canvas{display:none}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="logo">🍋</div>
+  <div><h1>Pinterest Pin Generator</h1><p>Seedream · Canvas · Runware</p></div>
+</div>
+<div class="main">
+
+<!-- SIDEBAR -->
+<div class="sb">
+
+  <!-- API Keys -->
+  <div>
+    <div class="sl">API Keys</div>
+    <div class="f" style="margin-bottom:8px">
+      <label>Anthropic API Key</label>
+      <div class="kw"><input type="password" id="ck" placeholder="sk-ant-..."/><button class="eye" onclick="toggleEye('ck',this)">👁</button></div>
+      <small>Только для режима «Claude + фон»</small>
+    </div>
+    <div class="f">
+      <label>Runware API Key</label>
+      <div class="kw"><input type="password" id="rk" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/><button class="eye" onclick="toggleEye('rk',this)">👁</button></div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Model -->
+  <div>
+    <div class="sl">Модель Runware</div>
+    <select id="mp" onchange="applyModel(this.value)" style="margin-bottom:6px">
+      <option value="">-- выбери --</option>
+      <optgroup label="Seedream — лучший текст">
+        <option value="bytedance:seedream@4.5" selected>Seedream 4.5 ★</option>
+        <option value="bytedance:seedream@5.0-lite">Seedream 5.0 Lite</option>
+      </optgroup>
+      <optgroup label="FLUX — реалистичные фото">
+        <option value="runware:100@1">FLUX.1 Dev</option>
+        <option value="runware:101@1">FLUX.1 Schnell</option>
+      </optgroup>
+      <optgroup label="Другие">
+        <option value="civitai:133005@782002">Juggernaut XL v9</option>
+        <option value="civitai:4201@130072">Realistic Vision v6</option>
+      </optgroup>
+    </select>
+    <input type="text" id="mid" value="bytedance:seedream@4.5" placeholder="Model ID"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+      <div class="f"><label>Ширина</label><input type="text" id="iw" value="1600"/></div>
+      <div class="f"><label>Высота</label><input type="text" id="ih" value="2400"/></div>
+      <div class="f"><label>Таймаут с</label><input type="text" id="tmt" value="120"/></div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Prompt mode -->
+  <div>
+    <div class="sl">Режим промта</div>
+    <div class="tabs2">
+      <button class="tab2 on" id="tab-direct" onclick="setMode('direct')">📝 Прямой</button>
+      <button class="tab2" id="tab-ai" onclick="setMode('ai')">🤖 Claude + фон</button>
+    </div>
+    <div style="margin-top:7px" id="hint-direct">
+      <div class="hint">Промт идёт напрямую в Runware. <code>{TITLE}</code> — заголовок пина.</div>
+    </div>
+    <div style="margin-top:7px;display:none" id="hint-ai">
+      <div class="hint">Claude подбирает фон под тему. <code>{TITLE}</code> и <code>{BACKGROUND}</code> — плейсхолдеры.</div>
+    </div>
+  </div>
+
+  <!-- Prompt template -->
+  <div class="f">
+    <label>Шаблон промта</label>
+    <textarea id="tpl" rows="8" style="min-height:160px;font-size:12px">Pinterest pin design, complete finished pin image, vertical portrait 2:3 ratio, {BACKGROUND}. In the center a solid rectangular banner panel in deep sage green. On this banner the text "{TITLE}" in bold white handwritten chalk script font, thick lettering with colored outline, dynamic layout with varying sizes and smooth curves. Small text "redcheeksgirl.com" at the very bottom in tiny white lowercase letters. Sharp focus, professional photography, high quality.</textarea>
+    <small>Плейсхолдеры: <code style="background:#f0e8b0;padding:1px 4px;border-radius:3px">{TITLE}</code> <code style="background:#d4ecd4;padding:1px 4px;border-radius:3px">{BACKGROUND}</code></small>
+  </div>
+
+  <div id="bg-wrap" style="display:none" class="f">
+    <label>Базовый фон (Claude дополнит)</label>
+    <textarea id="bgbase" rows="2" style="min-height:50px;font-size:12px">overhead flat lay photography, rustic wooden table, natural window light, cottage farmhouse aesthetic</textarea>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Photo collage -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="sl" style="margin-bottom:0">Фото из статьи</div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div class="sw"><input type="checkbox" id="photo-on" onchange="togglePhotos()"><span onclick="document.getElementById('photo-on').click()"></span></div>
+        <span style="font-size:11px;color:var(--txm);cursor:pointer" onclick="document.getElementById('photo-on').click()">вкл</span>
+      </div>
+    </div>
+
+    <div id="photo-sec" style="display:none">
+      <!-- Drop zone -->
+      <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event)">
+        <div style="font-size:22px">📷</div>
+        <p>Перетащи 2–4 фото или нажми<br><span style="font-size:10px">JPG · PNG · WEBP</span></p>
+      </div>
+      <input type="file" id="fi" accept="image/*" multiple style="display:none" onchange="addPhotos(this.files)">
+      <div class="thumbs" id="thumbs"></div>
+
+      <!-- Layout -->
+      <div style="font-size:11px;font-weight:600;color:var(--txm);margin:8px 0 4px">Раскладка</div>
+      <div class="ltabs">
+        <button class="ltab on" onclick="setLayout(this,'grid')">⊞ Сетка</button>
+        <button class="ltab" onclick="setLayout(this,'top3')">▦ 3+1</button>
+        <button class="ltab" onclick="setLayout(this,'vertical')">▥ Столбец</button>
+        <button class="ltab" onclick="setLayout(this,'hero')">⬛+мини</button>
+      </div>
+
+      <!-- Canvas mode -->
+      <div style="margin-top:10px;background:var(--yl);border:1px solid var(--y);border-radius:var(--rs);padding:10px">
+        <div style="font-size:11px;font-weight:700;color:#5a4800;margin-bottom:8px">✏️ Canvas режим — текст прямо на фото</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+          <div class="f">
+            <label style="font-size:11px">Цвет плашки</label>
+            <select id="bc" style="font-size:12px;padding:5px">
+              <option value="#3d6b4f">Тёмный зелёный</option>
+              <option value="#c0392b">Красный</option>
+              <option value="#2c3e50">Тёмно-синий</option>
+              <option value="#7d3c98">Фиолетовый</option>
+              <option value="#d35400">Терракота</option>
+              <option value="#1a1a1a">Чёрный</option>
+              <option value="#f5f0e8">Кремовый</option>
+            </select>
+          </div>
+          <div class="f">
+            <label style="font-size:11px">Цвет текста</label>
+            <select id="tc" style="font-size:12px;padding:5px">
+              <option value="#ffffff">Белый</option>
+              <option value="#f5f0e8">Кремовый</option>
+              <option value="#ffd700">Золотой</option>
+              <option value="#1a1a1a">Чёрный</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+          <div class="f">
+            <label style="font-size:11px">Позиция плашки</label>
+            <select id="bp" style="font-size:12px;padding:5px">
+              <option value="center">Центр</option>
+              <option value="bottom">Низ</option>
+              <option value="top">Верх</option>
+              <option value="bottom60">Нижние 40%</option>
+            </select>
+          </div>
+          <div class="f">
+            <label style="font-size:11px">Шрифт</label>
+            <select id="cf" style="font-size:12px;padding:5px">
+              <option value="'Playfair Display',serif">Playfair Display</option>
+              <option value="'Dancing Script',cursive">Dancing Script</option>
+              <option value="'Oswald',sans-serif">Oswald</option>
+              <option value="'Bebas Neue',cursive">Bebas Neue</option>
+              <option value="Impact,sans-serif">Impact</option>
+              <option value="Georgia,serif">Georgia</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button onclick="buildCanvasPins()" style="flex:1;padding:7px;background:var(--g);border:none;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;color:#fff">🖼 Создать пины (Canvas)</button>
+          <button onclick="previewCanvas()" style="padding:7px 10px;background:none;border:1px solid var(--g);border-radius:var(--rs);font-size:12px;cursor:pointer;color:var(--g)">👁</button>
+        </div>
+      </div>
+
+      <!-- AI img2img -->
+      <div style="margin-top:8px;padding:8px;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rs)">
+        <div style="font-size:11px;font-weight:700;color:var(--txm);margin-bottom:6px">🤖 AI img2img (FLUX) — сила обработки</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="range" id="str" min="0.2" max="0.85" step="0.05" value="0.3" oninput="document.getElementById('sv').textContent=this.value" style="flex:1;accent-color:var(--yd)">
+          <span id="sv" style="font-size:12px;font-weight:600;color:var(--yd);width:28px">0.3</span>
+        </div>
+        <div style="font-size:10px;color:var(--txm);margin-top:3px">0.2 = фото сохраняются · 0.8 = сильная стилизация</div>
+      </div>
+
+      <canvas id="cv"></canvas>
+      <div id="prev" style="display:none;margin-top:8px">
+        <div style="font-size:11px;color:var(--txm);margin-bottom:3px">Предпросмотр:</div>
+        <img id="prev-img" style="width:100%;border-radius:6px;border:1px solid var(--bd)">
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Titles -->
+  <div class="f">
+    <div class="sl">Заголовки пинов</div>
+    <label>По одному в строке (до 50)</label>
+    <textarea id="titles" rows="6" placeholder="15 Lemon Centerpiece Ideas&#10;10 Easy Summer Salad Recipes&#10;..."></textarea>
+    <div style="font-size:11px;color:var(--txm);text-align:right;margin-top:2px" id="tcount">0 заголовков</div>
+  </div>
+
+  <button class="btn-gen" id="bgen" onclick="runAI()">✨ Генерировать (AI)</button>
+
+  <div class="prog" id="prog">
+    <div class="prog-lbl" id="plbl">Подготовка...</div>
+    <div class="prog-track"><div class="prog-fill" id="pfill"></div></div>
+    <div class="prog-sub" id="psub"></div>
+  </div>
+
+</div>
+
+<!-- RESULTS -->
+<div class="res">
+  <div class="res-hdr">
+    <h2>Результаты <span id="dct" style="font-weight:400;color:#888;font-size:13px"></span></h2>
+    <div class="res-btns">
+      <button class="btn-exp" id="bexp" style="display:none" onclick="exportJSON()">⬇ JSON промты</button>
+      <button class="btn-sec" onclick="clearAll()">Очистить</button>
+    </div>
+  </div>
+  <div class="grid" id="grid">
+    <div class="empty"><div style="font-size:40px;margin-bottom:10px">🖼</div><p>Введи заголовки и нажми «Генерировать»</p></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State
+var pins = [];
+var busy = false;
+var mode = 'direct';
+var photos = []; // {dataUrl}
+var layout = 'grid';
+var collageB64 = null;
+
+// ── Utils
+function toggleEye(id, btn) {
+  var el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+  btn.textContent = el.type === 'password' ? '👁' : '🙈';
+}
+
+function applyModel(v) {
+  if (!v) return;
+  document.getElementById('mid').value = v;
+  var isBD = v.startsWith('bytedance:');
+  document.getElementById('iw').value = isBD ? '1600' : '768';
+  document.getElementById('ih').value = isBD ? '2400' : '1152';
+}
+
+function snapDim(val, mn, mx) {
+  var n = Math.round(parseInt(val) / 64) * 64;
+  return Math.min(Math.max(n, mn), mx);
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('tab-direct').classList.toggle('on', m === 'direct');
+  document.getElementById('tab-ai').classList.toggle('on', m === 'ai');
+  document.getElementById('hint-direct').style.display = m === 'direct' ? 'block' : 'none';
+  document.getElementById('hint-ai').style.display = m === 'ai' ? 'block' : 'none';
+  document.getElementById('bg-wrap').style.display = m === 'ai' ? 'block' : 'none';
+}
+
+document.getElementById('titles').addEventListener('input', function() {
+  var n = this.value.split('\n').map(function(l){ return l.trim(); }).filter(Boolean).length;
+  document.getElementById('tcount').textContent = n + ' заголовков';
+});
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+
+function setP(lbl, pct, sub) {
+  document.getElementById('prog').classList.add('on');
+  document.getElementById('plbl').textContent = lbl;
+  document.getElementById('pfill').style.width = pct + '%';
+  document.getElementById('psub').textContent = sub;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Photo upload
+function togglePhotos() {
+  var on = document.getElementById('photo-on').checked;
+  document.getElementById('photo-sec').style.display = on ? 'block' : 'none';
+}
+
+function dzOver(e) { e.preventDefault(); document.getElementById('dz').classList.add('drag'); }
+function dzLeave(e) { document.getElementById('dz').classList.remove('drag'); }
+function dzDrop(e) {
+  e.preventDefault();
+  document.getElementById('dz').classList.remove('drag');
+  addPhotos(e.dataTransfer.files);
+}
+
+function addPhotos(files) {
+  var toAdd = Math.min(files.length, 4 - photos.length);
+  for (var i = 0; i < toAdd; i++) {
+    (function(file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        photos.push({ dataUrl: e.target.result });
+        collageB64 = null;
+        renderThumbs();
+      };
+      reader.readAsDataURL(file);
+    })(files[i]);
+  }
+}
+
+function removePhoto(i) {
+  photos.splice(i, 1);
+  collageB64 = null;
+  renderThumbs();
+  document.getElementById('prev').style.display = 'none';
+}
+
+function renderThumbs() {
+  var c = document.getElementById('thumbs');
+  var html = '';
+  for (var i = 0; i < 4; i++) {
+    if (i < photos.length) {
+      html += '<div class="thumb"><img src="' + photos[i].dataUrl + '"><button class="thumb-del" onclick="removePhoto(' + i + ')">✕</button></div>';
+    } else {
+      html += '<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--bd)">+</div>';
+    }
+  }
+  c.innerHTML = html;
+}
+
+function setLayout(btn, l) {
+  layout = l;
+  document.querySelectorAll('.ltab').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  collageB64 = null;
+}
+
+// ── Collage builder
+function loadImage(dataUrl) {
+  return new Promise(function(resolve, reject) {
+    var img = new Image();
+    img.onload = function() { resolve(img); };
+    img.onerror = function() { reject(new Error('Не удалось загрузить фото')); };
+    img.src = dataUrl;
+  });
+}
+
+function drawCover(ctx, img, x, y, w, h) {
+  if (w <= 0 || h <= 0) return;
+  var iR = img.naturalWidth / img.naturalHeight;
+  var cR = w / h;
+  var sw, sh, sx, sy;
+  if (iR > cR) { sh = img.naturalHeight; sw = sh * cR; sx = (img.naturalWidth - sw) / 2; sy = 0; }
+  else { sw = img.naturalWidth; sh = sw / cR; sx = 0; sy = (img.naturalHeight - sh) / 2; }
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+}
+
+async function buildCollage(W, H) {
+  var canvas = document.getElementById('cv');
+  canvas.width = W; canvas.height = H;
+  var ctx = canvas.getContext('2d');
+  var n = photos.length;
+  var gap = Math.max(4, Math.round(W * 0.012));
+  ctx.fillStyle = '#222';
+  ctx.fillRect(0, 0, W, H);
+
+  var imgs = await Promise.all(photos.map(function(p){ return loadImage(p.dataUrl); }));
+
+  if (layout === 'grid') {
+    if (n === 1) { drawCover(ctx, imgs[0], 0, 0, W, H); }
+    else if (n === 2) { var hw = Math.floor((W-gap)/2); drawCover(ctx,imgs[0],0,0,hw,H); drawCover(ctx,imgs[1],hw+gap,0,W-hw-gap,H); }
+    else if (n === 3) { var hh=Math.floor((H-gap)/2),hw=Math.floor((W-gap)/2); drawCover(ctx,imgs[0],0,0,W,hh); drawCover(ctx,imgs[1],0,hh+gap,hw,H-hh-gap); drawCover(ctx,imgs[2],hw+gap,hh+gap,W-hw-gap,H-hh-gap); }
+    else { var hw=Math.floor((W-gap)/2),hh=Math.floor((H-gap)/2); drawCover(ctx,imgs[0],0,0,hw,hh); drawCover(ctx,imgs[1],hw+gap,0,W-hw-gap,hh); drawCover(ctx,imgs[2],0,hh+gap,hw,H-hh-gap); drawCover(ctx,imgs[3],hw+gap,hh+gap,W-hw-gap,H-hh-gap); }
+  } else if (layout === 'top3') {
+    var topH=Math.round(H*0.55),botH=H-topH-gap;
+    if(n===1){drawCover(ctx,imgs[0],0,0,W,H);}
+    else if(n===2){var tw=Math.floor((W-gap)/2);drawCover(ctx,imgs[0],0,0,tw,topH);drawCover(ctx,imgs[1],tw+gap,0,W-tw-gap,topH);}
+    else if(n===3){var tw=Math.floor((W-gap*2)/3);for(var i=0;i<3;i++)drawCover(ctx,imgs[i],i*(tw+gap),0,tw,topH);}
+    else{var tw=Math.floor((W-gap*2)/3);for(var i=0;i<3;i++)drawCover(ctx,imgs[i],i*(tw+gap),0,tw,topH);drawCover(ctx,imgs[3],0,topH+gap,W,botH);}
+  } else if (layout === 'vertical') {
+    var each=Math.floor((H-(n-1)*gap)/n);
+    for(var i=0;i<n;i++)drawCover(ctx,imgs[i],0,i*(each+gap),W,each);
+  } else if (layout === 'hero') {
+    if(n===1){drawCover(ctx,imgs[0],0,0,W,H);}
+    else{var heroH=Math.round(H*0.65),botH=H-heroH-gap,cols=n-1,tw=Math.floor((W-(cols-1)*gap)/cols);
+      drawCover(ctx,imgs[0],0,0,W,heroH);
+      for(var i=1;i<n;i++)drawCover(ctx,imgs[i],(i-1)*(tw+gap),heroH+gap,tw,botH);
+    }
+  }
+  return canvas;
+}
+
+async function getCollageB64() {
+  if (collageB64) return collageB64;
+  var isBD = document.getElementById('mid').value.startsWith('bytedance:');
+  var W = isBD ? 1600 : 768, H = isBD ? 2400 : 1152;
+  var canvas = await buildCollage(W, H);
+  collageB64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+  return collageB64;
+}
+
+// ── Canvas pin renderer
+function wrapText(ctx, text, maxW) {
+  var words = text.split(' ');
+  var lines = [], line = '';
+  for (var i = 0; i < words.length; i++) {
+    var test = line ? line + ' ' + words[i] : words[i];
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = words[i]; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+async function renderCanvasPin(title, W, H) {
+  var canvas = await buildCollage(W, H);
+  var ctx = canvas.getContext('2d');
+  var bannerColor = document.getElementById('bc').value;
+  var textColor = document.getElementById('tc').value;
+  var bannerPos = document.getElementById('bp').value;
+  var fontFamily = document.getElementById('cf').value;
+
+  var fs = Math.round(W * 0.082);
+  ctx.font = '900 ' + fs + 'px ' + fontFamily;
+  var maxW = W * 0.82;
+  var lines = wrapText(ctx, title, maxW);
+  var lineH = fs * 1.28;
+  var padV = Math.round(H * 0.022);
+  var padH = Math.round(W * 0.06);
+  var bannerH = lines.length * lineH + padV * 2;
+
+  var bannerY;
+  if (bannerPos === 'top') bannerY = Math.round(H * 0.05);
+  else if (bannerPos === 'bottom') bannerY = H - bannerH - Math.round(H * 0.06);
+  else if (bannerPos === 'bottom60') bannerY = Math.round(H * 0.52);
+  else bannerY = Math.round((H - bannerH) / 2);
+
+  // Banner shadow
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur = Math.round(W * 0.02);
+  ctx.shadowOffsetY = Math.round(H * 0.005);
+  ctx.fillStyle = bannerColor;
+  roundRect(ctx, padH, bannerY, W - padH * 2, bannerH, Math.round(W * 0.025));
+  ctx.fill();
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+
+  // Text
+  ctx.fillStyle = textColor;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '900 ' + fs + 'px ' + fontFamily;
+  ctx.shadowColor = 'rgba(0,0,0,0.25)'; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 2;
+  for (var i = 0; i < lines.length; i++) {
+    ctx.fillText(lines[i], W / 2, bannerY + padV + (i + 0.5) * lineH);
+  }
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+
+  // Watermark
+  var wmFs = Math.round(W * 0.027);
+  ctx.font = wmFs + 'px ' + fontFamily;
+  var wmText = 'redcheeksgirl.com';
+  var wmW = ctx.measureText(wmText).width + 14;
+  var wmX = W / 2 - wmW / 2;
+  var wmY = H - wmFs * 2;
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  ctx.fillRect(wmX, wmY, wmW, wmFs * 1.5);
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(wmText, W / 2, wmY + wmFs * 0.75);
+
+  return canvas;
+}
+
+async function previewCanvas() {
+  if (!photos.length) { toast('Сначала загрузи фото!'); return; }
+  var titles = document.getElementById('titles').value.split('\n').map(function(t){ return t.trim(); }).filter(Boolean);
+  var title = titles[0] || 'Sample Pin Title';
+  try {
+    var canvas = await renderCanvasPin(title, 400, 600);
+    document.getElementById('prev-img').src = canvas.toDataURL('image/jpeg', 0.9);
+    document.getElementById('prev').style.display = 'block';
+    toast('Предпросмотр готов!');
+  } catch(e) { toast('Ошибка: ' + e.message); }
+}
+
+async function buildCanvasPins() {
+  if (!photos.length) { toast('Загрузи фото!'); return; }
+  var titles = document.getElementById('titles').value.split('\n').map(function(t){ return t.trim(); }).filter(Boolean);
+  if (!titles.length) { toast('Добавь заголовки!'); return; }
+
+  var isBD = document.getElementById('mid').value.startsWith('bytedance:');
+  var W = isBD ? 1600 : 800, H = isBD ? 2400 : 1200;
+
+  busy = true;
+  document.getElementById('bgen').disabled = true;
+  pins = titles.map(function(t, i){ return {id:i,title:t,prompt:'[Canvas]',imageUrl:null,status:'pending',errMsg:''}; });
+  renderGrid();
+  document.getElementById('dct').textContent = '0/' + pins.length;
+  document.getElementById('prog').classList.add('on');
+
+  for (var i = 0; i < pins.length; i++) {
+    var pin = pins[i];
+    pin.status = 'generating';
+    patchCard(pin.id);
+    setP('Canvas: ' + (i+1) + ' из ' + pins.length, Math.round(i/pins.length*100), pin.title.slice(0,40));
+    try {
+      collageB64 = null; // rebuild for each pin with same photos
+      var canvas = await renderCanvasPin(pin.title, W, H);
+      pin.imageUrl = canvas.toDataURL('image/jpeg', 0.92);
+      pin.status = 'done';
+    } catch(e) { pin.status = 'error'; pin.errMsg = e.message; }
+    patchCard(pin.id);
+    document.getElementById('dct').textContent = (i+1) + '/' + pins.length;
+  }
+
+  setP('✅ Готово!', 100, pins.length + ' пинов создано');
+  toast(pins.length + ' пинов готово! 🎉');
+  busy = false;
+  document.getElementById('bgen').disabled = false;
+}
+
+// ── Card render
+function cardHTML(pin) {
+  var sl = {pending:'ожидание',queued:'в очереди',generating:'⚡ генерирую',done:'✓ готово',error:'ошибка'};
+  var img;
+  if (pin.imageUrl) {
+    img = '<img src="' + esc(pin.imageUrl) + '" alt="" loading="lazy">';
+  } else if (pin.status === 'generating') {
+    img = '<div class="pin-ph"><div class="spin"></div><span>генерирую...</span></div>';
+  } else if (pin.status === 'error') {
+    img = '<div class="pin-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg><span style="color:#c0392b;font-size:10px;word-break:break-word">' + esc(pin.errMsg||'ошибка') + '</span></div>';
+  } else {
+    img = '<div class="pin-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg><span>' + (sl[pin.status]||'ждёт') + '</span></div>';
+  }
+  return '<div class="pin" id="pin-' + pin.id + '">' +
+    '<div class="pin-img">' + img + '<span class="bdg s-' + pin.status + '">' + (sl[pin.status]||pin.status) + '</span></div>' +
+    '<div class="pin-body">' +
+      '<div class="pin-num">#' + (pin.id+1) + '</div>' +
+      '<div class="pin-ttl">' + esc(pin.title) + '</div>' +
+      (pin.prompt && pin.prompt !== '[Canvas]' ? '<button class="ptog" onclick="togglePrompt(' + pin.id + ')">показать промт</button><div class="pbox" id="pb-' + pin.id + '">' + esc(pin.prompt) + '</div>' : '') +
+      '<div class="pin-acts">' +
+        '<button class="btn-rg" onclick="regenPin(' + pin.id + ')"' + (pin.status==='generating'?' disabled':'') + '>↺ regenerate</button>' +
+        (pin.imageUrl ? '<button class="btn-dl" onclick="dlPin(' + pin.id + ')">⬇</button>' : '') +
+      '</div>' +
+    '</div></div>';
+}
+
+function renderGrid() {
+  var g = document.getElementById('grid');
+  if (!pins.length) { g.innerHTML = '<div class="empty"><div style="font-size:40px;margin-bottom:10px">🖼</div><p>Введи заголовки и нажми «Генерировать»</p></div>'; return; }
+  g.innerHTML = pins.map(cardHTML).join('');
+  document.getElementById('bexp').style.display = pins.some(function(p){ return p.prompt && p.prompt !== '[Canvas]'; }) ? '' : 'none';
+}
+
+function patchCard(id) {
+  var pin = pins.find(function(p){ return p.id === id; });
+  if (!pin) return;
+  var old = document.getElementById('pin-' + id);
+  if (!old) { renderGrid(); return; }
+  var tmp = document.createElement('div');
+  tmp.innerHTML = cardHTML(pin);
+  old.replaceWith(tmp.firstElementChild);
+  var done = pins.filter(function(p){ return p.status==='done'; }).length;
+  document.getElementById('dct').textContent = pins.length ? done + '/' + pins.length : '';
+  document.getElementById('bexp').style.display = pins.some(function(p){ return p.prompt && p.prompt !== '[Canvas]'; }) ? '' : 'none';
+}
+
+function togglePrompt(id) {
+  var b = document.getElementById('pb-' + id);
+  if (!b) return;
+  b.classList.toggle('open');
+  b.previousElementSibling.textContent = b.classList.contains('open') ? 'скрыть промт' : 'показать промт';
+}
+
+// ── Claude: get backgrounds
+async function getBackgrounds(titles, bgBase, claudeKey) {
+  var sys = 'For each Pinterest pin title, return a short background scene description (15-20 words) with topic-relevant props. Base style: ' + bgBase + '. Return ONLY valid JSON array: [{"title":"exact","bg":"description"}]. No markdown.';
+  var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:[{role:'user',content:'Titles:\n'+titles.map(function(t,i){return (i+1)+'. '+t;}).join('\n')}]})
+  });
+  if (!resp.ok) throw new Error('Claude ' + resp.status);
+  var data = await resp.json();
+  var txt = data.content.filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
+  return JSON.parse(txt.replace(/```json|```/g,'').trim());
+}
+
+// ── Runware
+async function genImage(prompt, modelId, w, h, rwKey, tmt, seedB64, strength) {
+  var taskUUID = crypto.randomUUID();
+  var isBD = modelId.startsWith('bytedance:');
+  var fw = isBD ? Math.max(parseInt(w),1600) : snapDim(w,128,2048);
+  var fh = isBD ? Math.max(parseInt(h),2400) : snapDim(h,128,2048);
+
+  var task = {taskType:'imageInference',taskUUID:taskUUID,model:modelId,positivePrompt:prompt,width:fw,height:fh,numberResults:1,outputFormat:'WEBP'};
+  if (isBD) task.providerSettings = {bytedance:{maxSequentialImages:1}};
+  else { task.steps = 30; task.CFGScale = 4; }
+  if (seedB64 && !isBD) { task.seedImage = 'data:image/jpeg;base64,' + seedB64; task.strength = parseFloat(strength)||0.3; }
+
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, (parseInt(tmt)||120)*1000);
+  var r, d;
+  try {
+    r = await fetch('https://api.runware.ai/v1', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+rwKey},
+      body:JSON.stringify([task]),
+      signal:ctrl.signal
+    });
+  } catch(e) {
+    clearTimeout(timer);
+    if (e.name==='AbortError') throw new Error('Таймаут ' + tmt + 'с');
+    throw new Error('Сеть/CORS: ' + e.message);
+  }
+  clearTimeout(timer);
+  try { d = await r.json(); } catch(e) { throw new Error('Не JSON, status ' + r.status); }
+  if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + JSON.stringify(d).slice(0,200));
+  if (d.errors && d.errors.length) throw new Error((d.errors[0].message||'error') + ' | code:' + d.errors[0].code);
+  var img = d.data && d.data[0] && (d.data[0].imageURL || d.data[0].imageUrl);
+  if (!img) throw new Error('Нет imageURL: ' + JSON.stringify(d).slice(0,200));
+  return img;
+}
+
+// ── Main AI run
+async function runAI() {
+  var ck = document.getElementById('ck').value.trim();
+  var rk = document.getElementById('rk').value.trim();
+  var mid = document.getElementById('mid').value.trim();
+  var iw = document.getElementById('iw').value.trim();
+  var ih = document.getElementById('ih').value.trim();
+  var tmt = document.getElementById('tmt').value.trim();
+  var tpl = document.getElementById('tpl').value;
+  var bgBase = document.getElementById('bgbase').value.trim();
+  var photoOn = document.getElementById('photo-on').checked;
+  var isBDmodel = mid.startsWith('bytedance:');
+  var strength = document.getElementById('str').value;
+  var titles = document.getElementById('titles').value.split('\n').map(function(t){ return t.trim(); }).filter(Boolean).slice(0,50);
+
+  if (!rk) { alert('Введи Runware API key!'); return; }
+  if (!titles.length) { alert('Введи заголовки!'); return; }
+  if (mode==='ai' && !ck) { alert('Для режима Claude нужен Anthropic API key!'); return; }
+
+  busy = true;
+  document.getElementById('bgen').disabled = true;
+  pins = titles.map(function(t,i){ return {id:i,title:t,prompt:'',imageUrl:null,status:'pending',errMsg:''}; });
+  renderGrid();
+  document.getElementById('dct').textContent = '0/' + pins.length;
+
+  // Build collage if photo mode on
+  var seedB64 = null;
+  if (photoOn && photos.length) {
+    setP('Собираю коллаж...', 3, 'Подготовка...');
+    try { seedB64 = await getCollageB64(); }
+    catch(e) { setP('❌ Ошибка коллажа', 0, e.message); busy=false; document.getElementById('bgen').disabled=false; return; }
+  }
+
+  try {
+    // Step 1: build prompts
+    if (mode === 'direct') {
+      setP('Подготовка промтов...', 8, 'Подставляю заголовки...');
+      pins.forEach(function(pin) {
+        var t = tpl;
+        if (photoOn && photos.length) {
+          var lmap = {grid:photos.length+'-фото сетка',top3:'3 фото сверху + 1 снизу',vertical:'вертикальный коллаж',hero:'большое фото + мини'};
+          t = t.replace(/\{BACKGROUND\}/g, lmap[layout] || 'photo collage background');
+        }
+        pin.prompt = t.replace(/\{TITLE\}/g, pin.title).replace(/\{BACKGROUND\}/g, 'flat lay photography, rustic wooden table, natural light, cottage farmhouse aesthetic');
+        pin.status = 'queued';
+      });
+      renderGrid();
+    } else {
+      var bs = 10, allBg = [];
+      for (var i = 0; i < titles.length; i += bs) {
+        var batch = titles.slice(i, i+bs);
+        setP('Фоны ' + (i+1) + '–' + Math.min(i+bs,titles.length) + ' из ' + titles.length, Math.round(i/titles.length*25), 'Claude подбирает пропсы...');
+        var res = await getBackgrounds(batch, bgBase, ck);
+        allBg = allBg.concat(res);
+        res.forEach(function(r, bi) {
+          var idx = i + bi;
+          if (pins[idx]) {
+            pins[idx].prompt = tpl.replace(/\{TITLE\}/g, pins[idx].title).replace(/\{BACKGROUND\}/g, r.bg || bgBase);
+            pins[idx].status = 'queued';
+            patchCard(idx);
+          }
+        });
+      }
+    }
+
+    // Step 2: generate images
+    var done = 0;
+    for (var i = 0; i < pins.length; i += 4) {
+      var batch = pins.slice(i, i+4);
+      await Promise.all(batch.map(async function(pin) {
+        pin.status = 'generating';
+        patchCard(pin.id);
+        try {
+          var useSeed = (photoOn && photos.length && !isBDmodel) ? seedB64 : null;
+          pin.imageUrl = await genImage(pin.prompt, mid, iw, ih, rk, tmt, useSeed, strength);
+          pin.status = pin.imageUrl ? 'done' : 'error';
+        } catch(e) { pin.status = 'error'; pin.errMsg = e.message; }
+        done++;
+        patchCard(pin.id);
+        setP('Изображения: ' + done + ' из ' + pins.length, 25 + Math.round(done/pins.length*75), '✓ ' + done + '/' + pins.length);
+      }));
+    }
+
+    var ok = pins.filter(function(p){ return p.status==='done'; }).length;
+    setP('✅ Готово!', 100, ok + ' из ' + pins.length + ' пинов');
+    toast(ok + ' пинов готово! 🎉');
+  } catch(e) { setP('❌ Ошибка', 0, e.message); }
+
+  busy = false;
+  document.getElementById('bgen').disabled = false;
+}
+
+// ── Regen single pin
+async function regenPin(id) {
+  var pin = pins.find(function(p){ return p.id===id; });
+  if (!pin || !pin.prompt) return;
+  var rk = document.getElementById('rk').value.trim();
+  var mid = document.getElementById('mid').value.trim();
+  var iw = document.getElementById('iw').value.trim();
+  var ih = document.getElementById('ih').value.trim();
+  var tmt = document.getElementById('tmt').value.trim();
+  var photoOn = document.getElementById('photo-on').checked;
+  var isBDmodel = mid.startsWith('bytedance:');
+  var strength = document.getElementById('str').value;
+  if (!rk) { alert('Введи Runware API key!'); return; }
+
+  if (pin.prompt === '[Canvas]') {
+    // Re-render canvas
+    pin.status = 'generating'; pin.imageUrl = null; patchCard(id);
+    try {
+      var isBD = mid.startsWith('bytedance:');
+      var W = isBD?1600:800, H = isBD?2400:1200;
+      collageB64 = null;
+      var canvas = await renderCanvasPin(pin.title, W, H);
+      pin.imageUrl = canvas.toDataURL('image/jpeg',0.92);
+      pin.status = 'done';
+    } catch(e) { pin.status='error'; pin.errMsg=e.message; }
+    patchCard(id);
+    return;
+  }
+
+  pin.status = 'generating'; pin.imageUrl = null; pin.errMsg = ''; patchCard(id);
+  try {
+    var useSeed = null;
+    if (photoOn && photos.length && !isBDmodel) useSeed = await getCollageB64();
+    pin.imageUrl = await genImage(pin.prompt, mid, iw, ih, rk, tmt, useSeed, strength);
+    pin.status = pin.imageUrl ? 'done' : 'error';
+  } catch(e) { pin.status='error'; pin.errMsg=e.message; toast('Ошибка: '+e.message); }
+  patchCard(id);
+}
+
+// ── Download
+async function dlPin(id) {
+  var pin = pins.find(function(p){ return p.id===id; });
+  if (!pin || !pin.imageUrl) return;
+  var fname = pin.title.replace(/[^a-z0-9\s]/gi,'').trim().replace(/\s+/g,'-').toLowerCase().slice(0,60) + '.jpg';
+  if (pin.imageUrl.startsWith('data:')) {
+    var a = document.createElement('a'); a.href = pin.imageUrl; a.download = fname; a.click();
+  } else {
+    try {
+      var resp = await fetch(pin.imageUrl);
+      var blob = await resp.blob();
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href=url; a.download=fname; a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
+    } catch(e) { window.open(pin.imageUrl,'_blank'); }
+  }
+}
+
+function exportJSON() {
+  var d = pins.filter(function(p){ return p.prompt && p.prompt!=='[Canvas]'; }).map(function(p){ return {num:p.id+1,title:p.title,prompt:p.prompt,status:p.status,imageUrl:p.imageUrl||null}; });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));
+  a.download = 'pinterest-prompts.json'; a.click();
+  toast('JSON скачан!');
+}
+
+function clearAll() {
+  if (busy) return;
+  pins = [];
+  renderGrid();
+  document.getElementById('prog').classList.remove('on');
+  document.getElementById('dct').textContent = '';
+}
+</script>
+</body>
+</html>
