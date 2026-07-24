@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍋</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinterest Pin Generator 🍋</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800;900&family=League+Spartan:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --y:#e8c900;--yl:#fef9c3;--yd:#a68f00;
+  --g:#5a7a4a;--gl:#edf4e8;
+  --tx:#1a1a1a;--txm:#6b6b6b;--bd:#e0ddd5;
+  --bg:#fafaf7;--card:#fff;--r:12px;--rs:8px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+.hdr{background:#1a1a1a;border-bottom:1px solid #333;padding:12px 24px;display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:100}
+.hdr h1{color:#fff}
+.hdr p{color:rgba(255,255,255,.5)}
+.logo{width:36px;height:36px;background:var(--y);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.hdr h1{font-size:16px;font-weight:600}
+.hdr p{font-size:11px;color:var(--txm)}
+.main{display:grid;grid-template-columns:460px 1fr;min-height:calc(100vh - 63px)}
+.sb{background:var(--card);border-right:1px solid var(--bd);padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;height:calc(100vh - 63px);position:sticky;top:63px}
+.sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:5px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:13px;font-weight:500}
+.f small{font-size:11px;color:var(--txm);line-height:1.4}
+input[type="text"],input[type="password"],textarea,select{width:100%;padding:7px 10px;border:1px solid var(--bd);border-radius:var(--rs);font-size:13px;font-family:inherit;background:var(--bg);color:var(--tx);outline:none;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(232,201,0,.13)}
+textarea{resize:vertical;line-height:1.55}
+.kw{position:relative}
+.kw input{padding-right:30px}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--txm)}
+.div{height:1px;background:var(--bd)}
+.tabs2{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden}
+.tab2{padding:7px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--txm);transition:all .15s;text-align:center}
+.tab2.on{background:var(--y);color:#2a2000}
+.hint{background:var(--yl);border:1px solid var(--y);border-radius:var(--rs);padding:8px 10px;font-size:11px;line-height:1.5;color:#5a4800}
+.hint code{background:rgba(0,0,0,.07);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:10px}
+.btn-gen{width:100%;padding:11px;background:var(--y);color:#2a2000;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
+.btn-gen:hover{background:#d4b600}
+.btn-gen:disabled{opacity:.5;cursor:not-allowed}
+.prog{background:var(--yl);border:1px solid var(--y);border-radius:var(--rs);padding:10px 12px;display:none}
+.prog.on{display:block}
+.prog-lbl{font-size:12px;font-weight:600;margin-bottom:5px}
+.prog-track{height:5px;background:rgba(0,0,0,.1);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--yd);border-radius:3px;transition:width .3s;width:0}
+.prog-sub{font-size:11px;color:var(--txm);margin-top:4px}
+/* photo */
+.drop-zone{border:2px dashed var(--bd);border-radius:var(--rs);padding:14px;text-align:center;cursor:pointer;transition:all .15s;background:var(--bg)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--y);background:var(--yl)}
+.drop-zone p{font-size:12px;color:var(--txm);margin-top:4px}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
+.thumb{position:relative;aspect-ratio:1;border-radius:5px;overflow:hidden;background:var(--bg);border:1px dashed var(--bd)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-del{position:absolute;top:2px;right:2px;width:17px;height:17px;background:rgba(0,0,0,.55);border:none;border-radius:50%;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ltabs{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.ltab{padding:4px 8px;font-size:11px;border:1px solid var(--bd);border-radius:5px;background:none;cursor:pointer;color:var(--txm);transition:all .15s}
+.ltab.on{background:var(--y);border-color:var(--y);color:#2a2000;font-weight:600}
+.toggle-row{display:flex;align-items:center;gap:7px;cursor:pointer}
+.sw{position:relative;width:34px;height:19px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;background:var(--bd);border-radius:20px;transition:.2s;cursor:pointer}
+.sw span:before{content:'';position:absolute;width:13px;height:13px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+span{background:var(--y)}
+.sw input:checked+span:before{transform:translateX(15px)}
+/* results */
+.res{padding:20px;overflow-y:auto}
+.res-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.res-hdr h2{font-size:16px;font-weight:600}
+.res-btns{display:flex;gap:7px}
+.btn-exp{padding:7px 13px;background:var(--gl);border:1px solid var(--g);border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;color:var(--g)}
+.btn-exp:hover{background:var(--g);color:#fff}
+.btn-sec{padding:7px 13px;background:none;border:1px solid var(--bd);border-radius:var(--rs);font-size:12px;cursor:pointer;color:var(--txm)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:13px}
+.pin{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;transition:box-shadow .15s}
+.pin:hover{box-shadow:0 3px 16px rgba(0,0,0,.08)}
+.pin-img{aspect-ratio:2/3;background:#f5e6d8;position:relative;overflow:hidden}
+.pin-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pin-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--txm);font-size:11px;padding:8px;text-align:center}
+.pin-ph svg{width:28px;height:28px;opacity:.3}
+.spin{width:20px;height:20px;border:2px solid rgba(232,201,0,.3);border-top-color:var(--yd);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.bdg{position:absolute;top:6px;right:6px;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600}
+.s-pending,.s-queued{background:rgba(255,255,255,.85);color:#888}
+.s-generating{background:var(--yl);color:var(--yd)}
+.s-done{background:var(--gl);color:var(--g)}
+.s-error{background:#fde8e8;color:#c0392b}
+.pin-body{padding:8px 10px 10px}
+.pin-num{font-size:10px;color:var(--txm);margin-bottom:2px}
+.pin-ttl{font-size:12px;font-weight:500;line-height:1.4;margin-bottom:6px}
+.ptog{font-size:10px;color:var(--yd);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:block;margin-bottom:4px}
+.pbox{font-size:10px;line-height:1.5;color:var(--txm);background:var(--bg);border-radius:5px;padding:6px 8px;margin-bottom:6px;display:none;user-select:all}
+.pbox.open{display:block}
+.pin-acts{display:flex;gap:5px}
+.btn-rg{flex:1;padding:6px 8px;background:none;border:1px solid var(--bd);border-radius:6px;font-size:11px;cursor:pointer;color:var(--txm);display:flex;align-items:center;justify-content:center;gap:3px;transition:all .15s}
+.btn-rg:hover{border-color:var(--y);color:var(--yd);background:var(--yl)}
+.btn-rg:disabled{opacity:.4;cursor:not-allowed}
+.btn-dl{padding:6px 9px;background:none;border:1px solid var(--bd);border-radius:6px;font-size:11px;cursor:pointer;color:var(--txm)}
+.btn-dl:hover{border-color:var(--g);color:var(--g)}
+.empty{grid-column:1/-1;text-align:center;padding:55px 20px;color:var(--txm)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;pointer-events:none;opacity:0;transition:opacity .3s;z-index:999}
+.toast.on{opacity:1}
+.pb{text-align:left;padding:8px 12px;border:1px solid var(--bd);border-radius:var(--rs);background:none;cursor:pointer;font-size:12px;color:var(--tx);transition:all .15s;width:100%}
+.pb:hover{border-color:var(--yd);color:var(--yd)}
+.pb.on{background:var(--y);border-color:var(--y);color:#2a2000;font-weight:700}
+canvas{display:none}
+/* article image picker */
+.art-imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px;max-height:600px;overflow-y:auto}
+.art-img{position:relative;width:100%;padding-bottom:150%;border-radius:5px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:var(--bg)}
+.art-img:hover{border-color:rgba(232,201,0,.5)}
+.art-img.sel{border-color:var(--y);box-shadow:0 0 0 1px var(--y)}
+.art-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.art-img-chk{position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--y);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#2a2000;z-index:2}
+.art-img.sel .art-img-chk{display:flex}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
+.hdr-tab{padding:6px 14px;border-radius:20px;border:none;font-size:12px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);transition:all .15s}
+.hdr-tab.on{background:var(--y);color:#2a2000}
+.sb-tabs{display:none}
+.pc{border:1px solid var(--bd);border-radius:var(--rs);padding:8px;background:var(--bg)}
+.pc-head{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.pc-num{width:20px;height:20px;background:var(--y);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#2a2000;flex-shrink:0}
+.pc-title{font-size:11px;color:var(--txm);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px}
+.pc select,.pc input{font-size:11px;padding:4px 6px;border:1px solid var(--bd);border-radius:5px;background:var(--bg);width:100%}
+.pc-cnt{display:flex;gap:3px;margin-top:5px}
+.pc-cnt button{flex:1;padding:4px;font-size:11px;border:1px solid var(--bd);border-radius:4px;background:none;cursor:pointer;color:var(--txm);transition:all .15s}
+.pc-cnt button.on{background:var(--y);border-color:var(--y);color:#2a2000;font-weight:700}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="logo">🍋</div>
+  <div><h1>Pinterest Pin Generator</h1><p>Seedream · Canvas · Runware</p></div>
+  <div style="display:flex;gap:6px;margin-left:16px">
+    <button class="hdr-tab on" id="htab-ai" onclick="switchTab('ai')">🤖 AI Пины</button>
+    <button class="hdr-tab" id="htab-cv" onclick="switchTab('canvas')">🖼 Canvas Коллажи</button>
+    <button class="hdr-tab" id="htab-b1" onclick="switchTab('batch1')">📎 Пакет 1:1</button>
+  </div>
+</div>
+<div class="main">
+
+<!-- SIDEBAR -->
+<div class="sb">
+
+  <!-- ══ AI PANEL ══ -->
+  <div id="ai-panel" style="display:flex;flex-direction:column;gap:14px">
+
+  <!-- API Keys -->
+  <div>
+    <div class="sl">API Keys</div>
+    <div class="f" style="margin-bottom:8px">
+      <label>Anthropic API Key <small style="color:var(--txm)">(пишет сцены)</small></label>
+      <div class="kw"><input type="password" id="ck" placeholder="sk-ant-..."/><button class="eye" onclick="toggleEye('ck',this)">👁</button></div>
+    </div>
+    <div class="f">
+      <label>Runware API Key <small style="color:var(--txm)">(GPT Image 2)</small></label>
+      <div class="kw"><input type="password" id="rk" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/><button class="eye" onclick="toggleEye('rk',this)">👁</button></div>
+    </div>
+    <div id="key-badge" style="font-size:11px;color:var(--txm);margin-top:7px"></div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Theme / Vibe -->
+  <div>
+    <div class="sl" style="margin-bottom:6px">Тема</div>
+    <select id="pin-vibe" style="width:100%;font-size:13px;padding:7px 8px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg)">
+      <option value="auto">🔍 Авто (по заголовкам)</option>
+      <option value="baby-shower">🍼 Baby Shower</option>
+      <option value="birthday">🎂 Birthday / Kids</option>
+      <option value="halloween">🎃 Halloween</option>
+      <option value="christmas">🎄 Christmas</option>
+      <option value="thanksgiving">🍂 Thanksgiving</option>
+      <option value="valentines">💝 Valentine's Day</option>
+      <option value="easter">🐣 Easter</option>
+      <option value="newyear">🥂 New Year</option>
+      <option value="bridal">💍 Bridal / Wedding</option>
+      <option value="general">✨ General / Lifestyle</option>
+    </select>
+    <div style="font-size:11px;color:var(--txm);margin-top:4px">Праздничные темы → фиксированная палитра; остальные → мягкая Pinterest-палитра.</div>
+  </div>
+
+  <!-- Watermark -->
+  <div class="f" style="margin-top:-4px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <label style="margin:0;white-space:nowrap">Водяной знак:</label>
+      <input type="text" id="ai-wm" value="redcheeksgirl.com" style="flex:1;font-size:12px;padding:5px 8px"/>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Titles + Generate -->
+  <div id="ai-titles-section">
+    <div class="f">
+      <div class="sl" style="margin-bottom:4px">Заголовки пинов <small style="color:var(--txm);font-weight:400">(по одному в строке)</small></div>
+      <textarea id="titles" rows="10" placeholder="15 Fun Halloween Games for Kids&#10;10 Spooky Party Ideas Adults Will Love&#10;..." oninput="document.getElementById('tcount').textContent=this.value.split('\n').filter(function(t){return t.trim();}).length+' заголовков'"></textarea>
+      <div style="font-size:11px;color:var(--txm);text-align:right;margin-top:2px" id="tcount">0 заголовков</div>
+    </div>
+    <button class="btn-gen" id="bgen" onclick="runAI()">✨ Генерировать пины</button>
+  </div>
+
+  <!-- Hidden compatibility shims -->
+  <input type="hidden" id="str" value="0.3">
+  <input type="hidden" id="mid" value="openai:gpt-image@2">
+  <input type="hidden" id="iw" value="1024">
+  <input type="hidden" id="ih" value="1536">
+  <input type="hidden" id="tmt" value="120">
+  <input type="hidden" id="bgbase" value="">
+  <input type="hidden" id="mp" value="openai:gpt-image@2">
+
+  </div><!-- /ai-panel -->
+
+  <!-- ══ CANVAS PANEL ══ -->
+  <div id="canvas-panel" style="display:none;flex-direction:column;gap:14px">
+
+  <!-- STEP 1: URL loader -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="sl" style="margin-bottom:0">1. Фото из статьи</div>
+      <button onclick="resetArticlePhotos()" style="font-size:11px;padding:3px 10px;background:none;border:1px solid #e55;border-radius:var(--rs);cursor:pointer;color:#e55;font-weight:600">✕ Сбросить</button>
+    </div>
+    <div style="display:flex;gap:5px">
+      <input type="text" id="art-url" placeholder="https://somanytrends.com/article/" style="flex:1;font-size:12px"/>
+      <button onclick="fetchArticleImages()" id="art-btn" style="padding:6px 12px;background:var(--y);border:none;border-radius:var(--rs);font-size:12px;font-weight:700;cursor:pointer;color:#2a2000;white-space:nowrap">📥 Найти</button>
+    </div>
+    <div id="art-status" style="font-size:11px;color:var(--txm);margin-top:3px;min-height:15px"></div>
+    <div id="art-imgs" class="art-imgs" style="display:none"></div>
+    <button id="art-add" onclick="addSelectedArticleImages()" style="display:none;width:100%;margin-top:5px;padding:7px;background:var(--gl);border:1px solid var(--g);border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;color:var(--g)">✅ Добавить выбранные</button>
+    <!-- hidden pool -->
+    <canvas id="cv" style="display:none"></canvas>
+    <div id="prev" style="display:none"><img id="prev-img" style="width:100%;border-radius:6px;border:1px solid var(--bd)"></div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- STEP 2: Titles + watermark -->
+  <div>
+    <div class="sl" style="margin-bottom:6px">2. Заголовки и водяной знак</div>
+    <textarea id="cv-titles" rows="4" placeholder="Night Party Outfit Ideas&#10;Evening Looks for Women&#10;Best Cocktail Dresses&#10;Elegant Evening Style" oninput="syncCvTitles()" style="font-size:13px"></textarea>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+      <div style="font-size:11px;color:var(--txm)" id="cv-tcount">0 заголовков</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:11px;color:var(--txm)">Watermark:</span>
+        <input type="text" id="wm" value="www.somanytrends.com" style="font-size:11px;padding:3px 7px;width:170px;border:1px solid var(--bd);border-radius:5px;background:var(--bg)"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- STEP 3: Per-pin design -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div class="sl" style="margin-bottom:0">3. Дизайн каждого пина</div>
+      <button onclick="window._artPhotoPool=photos.map(function(p){return p.dataUrl;});renderPinConfigs();" style="font-size:11px;padding:4px 10px;background:var(--y);border:none;border-radius:var(--rs);cursor:pointer;font-weight:600;color:#2a2000">↻ Обновить фото</button>
+    </div>
+    <div style="font-size:11px;color:var(--txm);margin-bottom:8px">Пины 1–2: одиночное фото · Пин 3: коллаж 2×2 · надпись рисует GPT Image</div>
+    <div style="background:var(--bg);border:1px solid var(--bd);border-radius:var(--rs);padding:8px 10px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px">
+      <div>
+        <div style="font-size:10px;color:var(--txm);font-weight:600;margin-bottom:3px">Как выбирать стиль надписи</div>
+        <select id="cv-mode" onchange="renderPinConfigs()" style="width:100%;font-size:12px;padding:5px 6px;border:1px solid var(--bd);border-radius:5px;background:#fff">
+          <option value="random" selected>🎲 Рандом — разные трендовые стили и цвета</option>
+          <option value="claude">🤖 Claude — под смысл заголовка</option>
+          <option value="manual">✋ Вручную — выбираю сама</option>
+        </select>
+      </div>
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;margin:0">
+        <input type="checkbox" id="cv-cta" checked style="width:auto;margin:0">
+        <span>Добавить CTA-кнопку на пин</span>
+      </label>
+    </div>
+    <div id="pcfg" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- Generate -->
+  <div style="margin-bottom:8px">
+    <div style="font-size:10px;color:var(--txm);font-weight:600;margin-bottom:3px">Модель для надписи</div>
+    <select id="cv-model" style="width:100%;font-size:12px;padding:5px 6px;border:1px solid var(--bd);border-radius:5px;background:#fff">
+      <option value="auto" selected>🛡 Авто — GPT Image, при отказе → Kontext</option>
+      <option value="openai:gpt-image@2">GPT Image 2 (лучший текст, блокирует лица)</option>
+      <option value="bfl:3@1">FLUX Kontext Pro (разрешает фото с людьми)</option>
+      <option value="bytedance:4@1">Seedream 4 (разрешает фото с людьми)</option>
+    </select>
+  </div>
+  <button onclick="buildAICanvasPins()" style="width:100%;padding:13px;background:var(--y);color:#2a2000;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer">✨ Сгенерировать 3 пина (AI-надпись)</button>
+  <button onclick="buildBatchCanvasPins()" style="width:100%;margin-top:6px;padding:8px;background:none;color:var(--txm);border:1px solid var(--bd);border-radius:var(--rs);font-size:12px;cursor:pointer">⚡ Быстро, системным шрифтом</button>
+
+  </div><!-- /canvas-panel -->
+
+  <!-- ══ BATCH 1:1 PANEL ══ -->
+  <div id="batch1-panel" style="display:none;flex-direction:column;gap:14px">
+
+    <div style="font-size:12px;color:var(--txm);line-height:1.5;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rs);padding:8px 10px">
+      1 заголовок = 1 фото = 1 пин. Порядок строгий: заголовок №1 → фото №1. До 30 штук. Надпись рисует GPT Image.
+    </div>
+
+    <!-- Titles -->
+    <div class="f">
+      <div class="sl" style="margin-bottom:4px">Заголовки <small style="color:var(--txm);font-weight:400">(по одному в строке, до 30)</small></div>
+      <textarea id="b1-titles" rows="7" placeholder="18 Understated Date Night Outfits&#10;12 Feminine Salomon XT-6 Looks&#10;..." oninput="b1Sync()"></textarea>
+      <div style="font-size:11px;color:var(--txm);text-align:right;margin-top:2px" id="b1-tcount">0 заголовков</div>
+    </div>
+
+    <!-- Photos -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div class="sl" style="margin-bottom:0">Фото <small style="color:var(--txm);font-weight:400">(в том же порядке)</small></div>
+        <button onclick="b1Reset()" style="font-size:11px;padding:3px 10px;background:none;border:1px solid #e55;border-radius:var(--rs);cursor:pointer;color:#e55;font-weight:600">✕ Сбросить</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <input type="text" id="b1-url" placeholder="https://somanytrends.com/article/" style="flex:1;font-size:12px"/>
+        <button onclick="b1FetchFromArticle()" id="b1-btn" style="padding:6px 12px;background:var(--y);border:none;border-radius:var(--rs);font-size:12px;font-weight:700;cursor:pointer;color:#2a2000;white-space:nowrap">📥 Из статьи</button>
+      </div>
+      <div id="b1-art-status" style="font-size:11px;color:var(--txm);min-height:14px"></div>
+      <div id="b1-art-imgs" class="art-imgs" style="display:none"></div>
+      <button id="b1-art-add" onclick="b1AddSelected()" style="display:none;width:100%;margin:5px 0;padding:7px;background:var(--gl);border:1px solid var(--g);border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;color:var(--g)">✅ Добавить выбранные</button>
+
+      <div style="font-size:10px;color:var(--txm);text-align:center;margin:6px 0">— или вставь прямые URL фото —</div>
+      <textarea id="b1-urls" rows="4" placeholder="https://site.com/photo1.jpg&#10;https://site.com/photo2.jpg&#10;..." style="font-size:11px"></textarea>
+      <button onclick="b1AddUrls()" id="b1-urls-btn" style="width:100%;margin-top:5px;padding:7px;background:var(--gl);border:1px solid var(--g);border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;color:var(--g)">📥 Подтянуть фото по URL</button>
+      <div id="b1-urls-status" style="font-size:11px;color:var(--txm);min-height:14px;margin-top:3px"></div>
+
+      <div style="font-size:10px;color:var(--txm);text-align:center;margin:6px 0">— или загрузи с компьютера —</div>
+      <div id="b1-drop" onclick="document.getElementById('b1-file').click()" style="border:2px dashed var(--bd);border-radius:var(--rs);padding:14px;text-align:center;cursor:pointer;font-size:12px;color:var(--txm)">📷 Перетащи или нажми · JPG / PNG / WEBP</div>
+      <input type="file" id="b1-file" accept="image/*" multiple style="display:none" onchange="b1AddFiles(this.files)">
+
+      <!-- ordered pairing preview -->
+      <div id="b1-pairs" style="display:flex;flex-direction:column;gap:5px;margin-top:8px"></div>
+    </div>
+
+    <div class="div"></div>
+
+    <!-- Style mode -->
+    <div>
+      <div class="sl" style="margin-bottom:4px">Стиль надписи</div>
+      <select id="b1-mode" onchange="b1ModeChange()" style="width:100%;font-size:12px;padding:6px;border:1px solid var(--bd);border-radius:5px;background:#fff">
+        <option value="random" selected>🎲 Рандом — свой стиль на каждый пин</option>
+        <option value="claude">🤖 Claude — под смысл заголовка</option>
+        <option value="fixed">1️⃣ Один стиль на всю пачку</option>
+      </select>
+      <div id="b1-fixed-wrap" style="display:none;margin-top:6px">
+        <select id="b1-fixed-style" style="width:100%;font-size:12px;padding:6px;border:1px solid var(--bd);border-radius:5px;background:var(--bg)"></select>
+      </div>
+    </div>
+
+    <!-- Watermark + CTA + model -->
+    <div class="f">
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="margin:0;white-space:nowrap">Водяной знак:</label>
+        <input type="text" id="b1-wm" value="www.somanytrends.com" style="flex:1;font-size:12px;padding:5px 8px"/>
+      </div>
+    </div>
+    <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;margin:0">
+      <input type="checkbox" id="b1-cta" style="width:auto;margin:0"><span>Добавить CTA-кнопку</span>
+    </label>
+    <div>
+      <div style="font-size:10px;color:var(--txm);font-weight:600;margin-bottom:3px">Модель</div>
+      <select id="b1-model" style="width:100%;font-size:12px;padding:5px 6px;border:1px solid var(--bd);border-radius:5px;background:#fff">
+        <option value="auto" selected>🛡 Авто — GPT Image → Kontext → Seedream</option>
+        <option value="openai:gpt-image@2">GPT Image 2</option>
+        <option value="bfl:3@1">FLUX Kontext Pro</option>
+        <option value="bytedance:4@1">Seedream 4</option>
+      </select>
+    </div>
+
+    <button onclick="runBatch1()" style="width:100%;padding:13px;background:var(--y);color:#2a2000;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer">✨ Сгенерировать пины 1:1</button>
+
+  </div><!-- /batch1-panel -->
+
+
+  <div class="prog" id="prog">
+    <div class="prog-lbl" id="plbl">Подготовка...</div>
+    <div class="prog-track"><div class="prog-fill" id="pfill"></div></div>
+    <div class="prog-sub" id="psub"></div>
+  </div>
+
+</div>
+
+<!-- RESULTS -->
+<div class="res">
+  <div class="res-hdr">
+    <h2>Результаты <span id="dct" style="font-weight:400;color:#888;font-size:13px"></span></h2>
+    <div class="res-btns">
+      <button class="btn-exp" id="bexp" style="display:none" onclick="exportJSON()">⬇ JSON промты</button>
+      <button class="btn-sec" onclick="clearAll()">Очистить</button>
+    </div>
+  </div>
+  <div class="grid" id="grid">
+    <div class="empty"><div style="font-size:40px;margin-bottom:10px">🖼</div><p>Введи заголовки и нажми «Генерировать»</p></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State
+var pins = [];
+var busy = false;
+var mode = 'ai';
+var photos = []; // {dataUrl}
+var layout = 'grid';
+var collageB64 = null;
+
+// ── Utils
+function toggleEye(id, btn) {
+  var el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+  btn.textContent = el.type === 'password' ? '👁' : '🙈';
+}
+
+function applyModel(v) {
+  if (!v) return;
+  document.getElementById('mid').value = v;
+  var isBD = v.startsWith('bytedance:');
+  document.getElementById('iw').value = isBD ? '1600' : '768';
+  document.getElementById('ih').value = isBD ? '2400' : '1152';
+}
+
+function snapDim(val, mn, mx) {
+  var n = Math.round(parseInt(val) / 64) * 64;
+  return Math.min(Math.max(n, mn), mx);
+}
+
+function setMode(m) {
+  mode = m;
+  function tog(id, cls, val) { var el=document.getElementById(id); if(el) el.classList.toggle(cls, val); }
+  function sty(id, prop, val) { var el=document.getElementById(id); if(el) el.style[prop]=val; }
+  tog('tab-direct','on', m==='direct');
+  tog('tab-ai',    'on', m==='ai');
+  sty('hint-direct','display', m==='direct'?'block':'none');
+  sty('hint-ai',    'display', m==='ai'?'block':'none');
+  sty('bg-wrap',    'display', m==='ai'?'block':'none');
+}
+
+document.getElementById('titles').addEventListener('input', function() {
+  var n = this.value.split('\n').map(function(l){ return l.trim(); }).filter(Boolean).length;
+  document.getElementById('tcount').textContent = n + ' заголовков';
+});
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+
+function setP(lbl, pct, sub) {
+  document.getElementById('prog').classList.add('on');
+  document.getElementById('plbl').textContent = lbl;
+  document.getElementById('pfill').style.width = pct + '%';
+  document.getElementById('psub').textContent = sub;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Tab switching
+var pinConfigs = [
+  {layout:'single', typo:'editorial-caps',  photoIndices:[], color:'#1a1a1a', textColor:'#ffffff', font:"'Playfair Display',serif", weight:'800', transform:'uppercase', fontSize:8, banner:'solid-center'},
+  {layout:'single', typo:'etna-grotesque',  photoIndices:[], color:'#f5f0e8', textColor:'#1a1a1a', font:"'Montserrat',sans-serif",  weight:'800', transform:'uppercase', fontSize:7, banner:'solid-bottom'},
+  {layout:'grid',   typo:'bottom-gradient', photoIndices:[], color:'#1a1a1a', textColor:'#ffffff', font:"'Montserrat',sans-serif",  weight:'700', transform:'uppercase', fontSize:8, banner:'gradient-bottom'}
+];
+
+function switchTab(tab) {
+  if (tab === 'canvas') {
+    if (photos && photos.length) window._artPhotoPool = photos.map(function(p){ return p.dataUrl; });
+    renderPinConfigs();
+  }
+  if (tab === 'batch1') b1RenderPairs();
+  function sty(id, prop, val) { var el=document.getElementById(id); if(el) el.style[prop]=val; }
+  function tog(id, cls, val)  { var el=document.getElementById(id); if(el) el.classList.toggle(cls, val); }
+  sty('ai-panel',     'display', tab==='ai'     ? 'flex' : 'none');
+  sty('canvas-panel', 'display', tab==='canvas' ? 'flex' : 'none');
+  sty('batch1-panel', 'display', tab==='batch1' ? 'flex' : 'none');
+  sty('ai-titles-section','display', tab==='ai' ? 'block' : 'none');
+  sty('prog', 'display', tab==='ai' ? '' : 'none');
+  tog('htab-ai', 'on', tab==='ai');
+  tog('htab-cv', 'on', tab==='canvas');
+  tog('htab-b1', 'on', tab==='batch1');
+}
+
+function syncCvTitles() {
+  var lines = document.getElementById('cv-titles').value.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  document.getElementById('cv-tcount').textContent = lines.length + ' заголовков';
+  renderPinConfigs();
+}
+
+function renderPinConfigs() {
+  window._artPhotoPool = photos.map(function(p){ return p.dataUrl; });
+  var titles = document.getElementById('cv-titles').value.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  var container = document.getElementById('pcfg');
+  if (!container) return;
+  var pool = window._artPhotoPool || [];
+  var html = '';
+
+  for (var i = 0; i < 3; i++) {
+    var cfg = pinConfigs[i];
+    var title = titles[i] || '(заголовок ' + (i+1) + ')';
+    var indices = cfg.photoIndices || [];
+
+    html += '<div class="pc" id="pc-' + i + '">';
+    html += '<div class="pc-head"><div class="pc-num">' + (i+1) + '</div>';
+    html += '<div class="pc-title">' + title.slice(0,46) + (title.length>46?'…':'') + '</div></div>';
+
+    // Photos
+    html += '<div style="font-size:10px;font-weight:600;color:var(--txm);margin-bottom:4px">Фото (выбери ' + (cfg.layout==='grid'?'до 4':'1') + '):</div>';
+    html += '<div style="display:flex;gap:4px;flex-wrap:wrap" id="pp-' + i + '">';
+    if (pool.length) {
+      pool.forEach(function(dataUrl, pi) {
+        var s = indices.indexOf(pi);
+        html += '<div onclick="togglePinPhoto(' + i + ',' + pi + ')" style="position:relative;width:44px;height:60px;border-radius:4px;overflow:hidden;cursor:pointer;border:2px solid ' + (s>-1?'var(--y)':'#ccc') + ';flex-shrink:0">';
+        html += '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;display:block">';
+        if (s>-1) html += '<div style="position:absolute;top:2px;left:2px;width:15px;height:15px;background:var(--y);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2a2000">' + (s+1) + '</div>';
+        html += '</div>';
+      });
+    } else {
+      html += '<div style="font-size:11px;color:var(--txm);padding:5px;background:var(--bg);border-radius:4px;border:1px dashed var(--bd)">↑ Сначала загрузи фото</div>';
+    }
+    html += '</div>';
+
+    // Layout
+    html += '<div style="display:flex;gap:4px;margin-top:6px">';
+    html += '<button onclick="setPinLayout(' + i + ',\'single\')" class="pc-lay-btn' + (cfg.layout==='single'?' on':'') + '" data-pi="' + i + '" data-val="single">1 фото</button>';
+    html += '<button onclick="setPinLayout(' + i + ',\'grid\')" class="pc-lay-btn' + (cfg.layout==='grid'?' on':'') + '" data-pi="' + i + '" data-val="grid">2×2 коллаж</button>';
+    html += '</div>';
+
+    // Typography style
+    var mEl = document.getElementById('cv-mode');
+    var cvMode = mEl ? mEl.value : 'random';
+    var lockStyle = cvMode !== 'manual';
+    var lockLabel = cvMode === 'random' ? ' — выберет рандом' : (cvMode === 'claude' ? ' — подберёт Claude' : ' (вручную)');
+    html += '<div style="margin-top:8px' + (lockStyle ? ';opacity:.45;pointer-events:none' : '') + '"><div style="font-size:10px;color:var(--txm);margin-bottom:3px;font-weight:600">Стиль надписи' + lockLabel + '</div>';
+    html += '<select style="width:100%;font-size:12px;padding:5px 6px;border:1px solid var(--bd);border-radius:5px;background:var(--bg)" onchange="setPinProp(' + i + ',\'typo\',this.value)">';
+    TYPO_STYLES.forEach(function(t){
+      html += '<option value="' + t.id + '"' + (cfg.typo===t.id?' selected':'') + '>' + t.label + '</option>';
+    });
+    html += '</select></div>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+
+  if (!document.getElementById('pc-lay-style')) {
+    var s = document.createElement('style');
+    s.id = 'pc-lay-style';
+    s.textContent = '.pc-lay-btn{flex:1;padding:5px 4px;font-size:11px;border:1px solid var(--bd);border-radius:5px;background:none;cursor:pointer;color:var(--txm);transition:all .15s}.pc-lay-btn.on{background:var(--y);border-color:var(--y);color:#2a2000;font-weight:700}';
+    document.head.appendChild(s);
+  }
+}
+
+function setPinCount(i, cnt) {
+  pinConfigs[i].count = cnt;
+  renderPinConfigs();
+}
+
+function setPinProp(i, prop, val) {
+  pinConfigs[i][prop] = val;
+}
+
+function setPinLayout(i, val) {
+  pinConfigs[i].layout = val;
+  // swap layout buttons
+  document.querySelectorAll('[data-pi="' + i + '"]').forEach(function(btn){
+    btn.classList.toggle('on', btn.getAttribute('data-val') === val);
+  });
+  // update picker max label
+  var lbl = document.querySelector('#pp-' + i);
+  if (lbl) {
+    var maxDiv = lbl.previousElementSibling;
+    if (maxDiv) maxDiv.textContent = 'Фото (клик — выбрать, макс ' + (val==='grid'?4:1) + '):';
+  }
+  // trim excess selections
+  var max = val === 'grid' ? 4 : 1;
+  if (pinConfigs[i].photoIndices.length > max) {
+    pinConfigs[i].photoIndices = pinConfigs[i].photoIndices.slice(0, max);
+    refreshPhotoPicker(i);
+  }
+}
+
+function setPinBanner(i, val) {
+  pinConfigs[i].banner = val;
+}
+
+function refreshPhotoPicker(pinIdx) {
+  var pp = document.getElementById('pp-' + pinIdx);
+  if (!pp || !window._artPhotoPool) return;
+  var indices = pinConfigs[pinIdx].photoIndices || [];
+  var pool = window._artPhotoPool;
+  var html = '';
+  pool.forEach(function(dataUrl, pi) {
+    var selIdx = indices.indexOf(pi);
+    var sel = selIdx > -1;
+    html += '<div onclick="togglePinPhoto(' + pinIdx + ',' + pi + ')" style="position:relative;width:44px;height:60px;border-radius:4px;overflow:hidden;cursor:pointer;border:2px solid ' + (sel?'var(--y)':'#ccc') + ';flex-shrink:0">';
+    html += '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;display:block">';
+    if (sel) html += '<div style="position:absolute;top:2px;left:2px;width:15px;height:15px;background:var(--y);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#2a2000">' + (selIdx+1) + '</div>';
+    html += '</div>';
+  });
+  pp.innerHTML = html;
+}
+
+function togglePinPhoto(pinIdx, photoIdx) {
+  var cfg = pinConfigs[pinIdx];
+  var arr = cfg.photoIndices || [];
+  var pos = arr.indexOf(photoIdx);
+  var max = cfg.layout === 'grid' ? 4 : 1;
+  if (pos > -1) arr.splice(pos, 1);
+  else { if (arr.length >= max) arr.shift(); arr.push(photoIdx); }
+  cfg.photoIndices = arr;
+  refreshPhotoPicker(pinIdx);
+}
+
+// ── Photo upload
+function togglePhotos() {}  // no-op, canvas panel always shows photos
+
+function dzOver(e) { e.preventDefault(); document.getElementById('dz').classList.add('drag'); }
+function dzLeave(e) { document.getElementById('dz').classList.remove('drag'); }
+function dzDrop(e) {
+  e.preventDefault();
+  document.getElementById('dz').classList.remove('drag');
+  addPhotos(e.dataTransfer.files);
+}
+
+function addPhotos(files) {
+  var toAdd = Math.min(files.length, 8 - photos.length);
+  for (var i = 0; i < toAdd; i++) {
+    (function(file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        photos.push({ dataUrl: e.target.result });
+        collageB64 = null;
+        renderThumbs();
+      };
+      reader.readAsDataURL(file);
+    })(files[i]);
+  }
+}
+
+function removePhoto(i) {
+  photos.splice(i, 1);
+  collageB64 = null;
+  renderThumbs();
+  document.getElementById('prev').style.display = 'none';
+}
+
+function renderThumbs() {
+  var el = document.getElementById('thumbs');
+  if (!el) return; // thumbs only shown in AI panel
+  var html = '';
+  for (var i = 0; i < 8; i++) {
+    if (i < photos.length) {
+      html += '<div class="thumb"><img src="' + photos[i].dataUrl + '"><button class="thumb-del" onclick="removePhoto(' + i + ')">✕</button></div>';
+    } else {
+      html += '<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--bd)">+</div>';
+    }
+  }
+  el.innerHTML = html;
+}
+
+function setLayout(btn, l) {
+  layout = l;
+  document.querySelectorAll('.ltab').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  collageB64 = null;
+}
+
+// ── Collage builder
+function loadImage(dataUrl) {
+  return new Promise(function(resolve, reject) {
+    var img = new Image();
+    img.onload = function() { resolve(img); };
+    img.onerror = function() { reject(new Error('Не удалось загрузить фото')); };
+    img.src = dataUrl;
+  });
+}
+
+function drawCover(ctx, img, x, y, w, h) {
+  if (w <= 0 || h <= 0) return;
+  if (!img || !img.naturalWidth) { ctx.fillStyle='#444'; ctx.fillRect(x,y,w,h); return; }
+  var iR = img.naturalWidth / img.naturalHeight;
+  var cR = w / h;
+  var sw, sh, sx, sy;
+  if (iR > cR) { sh = img.naturalHeight; sw = sh * cR; sx = (img.naturalWidth - sw) / 2; sy = 0; }
+  else { sw = img.naturalWidth; sh = sw / cR; sx = 0; sy = (img.naturalHeight - sh) / 2; }
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+}
+
+async function buildCollage(W, H) {
+  var canvas = document.getElementById('cv');
+  canvas.width = W; canvas.height = H;
+  var ctx = canvas.getContext('2d');
+  var n = photos.length;
+  var gap = Math.max(4, Math.round(W * 0.012));
+  ctx.fillStyle = '#222';
+  ctx.fillRect(0, 0, W, H);
+
+  var imgs = await Promise.all(photos.map(function(p){ return loadImage(p.dataUrl).catch(function(){ return null; }); }));
+  // Pad to at least 4 so grid layout doesn't crash on undefined
+  while (imgs.length < 4) imgs.push(null);
+
+  if (layout === 'grid') {
+    if (n === 1) { drawCover(ctx, imgs[0], 0, 0, W, H); }
+    else if (n === 2) { var hw = Math.floor((W-gap)/2); drawCover(ctx,imgs[0],0,0,hw,H); drawCover(ctx,imgs[1],hw+gap,0,W-hw-gap,H); }
+    else if (n === 3) { var hh=Math.floor((H-gap)/2),hw=Math.floor((W-gap)/2); drawCover(ctx,imgs[0],0,0,W,hh); drawCover(ctx,imgs[1],0,hh+gap,hw,H-hh-gap); drawCover(ctx,imgs[2],hw+gap,hh+gap,W-hw-gap,H-hh-gap); }
+    else { var hw=Math.floor((W-gap)/2),hh=Math.floor((H-gap)/2); drawCover(ctx,imgs[0],0,0,hw,hh); drawCover(ctx,imgs[1],hw+gap,0,W-hw-gap,hh); drawCover(ctx,imgs[2],0,hh+gap,hw,H-hh-gap); drawCover(ctx,imgs[3],hw+gap,hh+gap,W-hw-gap,H-hh-gap); }
+  } else if (layout === 'top3') {
+    var topH=Math.round(H*0.55),botH=H-topH-gap;
+    if(n===1){drawCover(ctx,imgs[0],0,0,W,H);}
+    else if(n===2){var tw=Math.floor((W-gap)/2);drawCover(ctx,imgs[0],0,0,tw,topH);drawCover(ctx,imgs[1],tw+gap,0,W-tw-gap,topH);}
+    else if(n===3){var tw=Math.floor((W-gap*2)/3);for(var i=0;i<3;i++)drawCover(ctx,imgs[i],i*(tw+gap),0,tw,topH);}
+    else{var tw=Math.floor((W-gap*2)/3);for(var i=0;i<3;i++)drawCover(ctx,imgs[i],i*(tw+gap),0,tw,topH);drawCover(ctx,imgs[3],0,topH+gap,W,botH);}
+  } else if (layout === 'vertical') {
+    var each=Math.floor((H-(n-1)*gap)/n);
+    for(var i=0;i<n;i++)drawCover(ctx,imgs[i],0,i*(each+gap),W,each);
+  } else if (layout === 'hero') {
+    if(n===1){drawCover(ctx,imgs[0],0,0,W,H);}
+    else{var heroH=Math.round(H*0.65),botH=H-heroH-gap,cols=n-1,tw=Math.floor((W-(cols-1)*gap)/cols);
+      drawCover(ctx,imgs[0],0,0,W,heroH);
+      for(var i=1;i<n;i++)drawCover(ctx,imgs[i],(i-1)*(tw+gap),heroH+gap,tw,botH);
+    }
+  }
+  return canvas;
+}
+
+async function getCollageB64() {
+  if (collageB64) return collageB64;
+  var isBD = document.getElementById('mid').value.startsWith('bytedance:');
+  var W = isBD ? 1600 : 768, H = isBD ? 2400 : 1152;
+  var canvas = await buildCollage(W, H);
+  collageB64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+  return collageB64;
+}
+
+// ── Canvas pin renderer
+function wrapText(ctx, text, maxW) {
+  var words = text.split(' ');
+  var lines = [], line = '';
+  for (var i = 0; i < words.length; i++) {
+    var test = line ? line + ' ' + words[i] : words[i];
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = words[i]; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+async function renderCanvasPin(title, W, H, cfg) {
+  var savedPhotos = photos.slice();
+  var savedLayout = layout;
+
+  if (cfg && cfg.photoIndices && cfg.photoIndices.length && window._artPhotoPool) {
+    photos = cfg.photoIndices
+      .map(function(i){ return window._artPhotoPool[i] ? {dataUrl: window._artPhotoPool[i]} : null; })
+      .filter(Boolean);
+  }
+  if (!photos.length && savedPhotos.length) photos = [savedPhotos[0]];
+
+  layout = (cfg && cfg.layout === 'single') ? 'grid' : ((cfg && cfg.layout) || savedLayout);
+
+  var canvas = await buildCollage(W, H);
+  photos = savedPhotos;
+  layout = savedLayout;
+
+  var ctx = canvas.getContext('2d');
+  var bannerColor   = (cfg && cfg.color)      || '#1a1a1a';
+  var bannerRaw     = (cfg && cfg.banner)     || 'solid-center';
+  var bannerStyle   = bannerRaw.split('-')[0];     // solid / semi / gradient
+  var bannerPos     = bannerRaw.split('-').slice(1).join('-') || 'center'; // center / top / bottom
+  var textColor     = (cfg && cfg.textColor)  || '#ffffff';
+  var fontFamily    = (cfg && cfg.font)       || "'Playfair Display',serif";
+  var fontWeight    = (cfg && cfg.weight)     || '800';
+  var textTransform = (cfg && cfg.transform)  || 'none';
+  var letterSp      = parseInt((cfg && cfg.spacing) || 0);
+  var wmEl = document.getElementById('wm');
+  var wmText = (wmEl && wmEl.value.trim()) || 'www.somanytrends.com';
+
+  var fsPct = (cfg && cfg.fontSize) ? cfg.fontSize / 100 : 0.08;
+  var fs    = Math.round(W * fsPct);
+  var lineH = fs * 1.28;
+
+  var displayTitle = title;
+  if (textTransform === 'uppercase')       displayTitle = title.toUpperCase();
+  else if (textTransform === 'lowercase')  displayTitle = title.toLowerCase();
+  else if (textTransform === 'capitalize') displayTitle = title.replace(/\w/g, function(l){return l.toUpperCase();});
+
+  ctx.font = fontWeight + ' ' + fs + 'px ' + fontFamily;
+  var lines = wrapText(ctx, displayTitle, W * 0.80);
+  var padV  = Math.round(H * 0.024);
+  var padH  = Math.round(W * 0.055);
+  var bannerH = lines.length * lineH + padV * 2;
+
+  var bannerY;
+  if      (bannerPos === 'top')      bannerY = Math.round(H * 0.04);
+  else if (bannerPos === 'bottom')   bannerY = H - bannerH - Math.round(H * 0.05);
+  else if (bannerPos === 'bottom60') bannerY = Math.round(H * 0.50);
+  else                               bannerY = Math.round((H - bannerH) / 2);
+
+  var bx = padH, bw = W - padH*2, rx = Math.round(W * 0.022);
+
+  if (bannerStyle === 'gradient') {
+    var grd = ctx.createLinearGradient(0, bannerY - bannerH*0.3, 0, bannerY + bannerH*1.3);
+    grd.addColorStop(0, 'rgba(0,0,0,0)');
+    grd.addColorStop(0.3, hexToRgba(bannerColor, 0.75));
+    grd.addColorStop(1,   hexToRgba(bannerColor, 0.92));
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, bannerY - bannerH*0.3, W, bannerH*1.6);
+  } else if (bannerStyle === 'outline') {
+    ctx.fillStyle = bannerColor;
+    roundRect(ctx, bx, bannerY, bw, bannerH, rx); ctx.fill();
+    ctx.strokeStyle = isLightColor(bannerColor) ? '#1a1a1a' : '#ffffff';
+    ctx.lineWidth = Math.round(W * 0.008);
+    var brd = Math.round(W * 0.018);
+    roundRect(ctx, bx+brd, bannerY+brd, bw-brd*2, bannerH-brd*2, rx*0.6); ctx.stroke();
+    ctx.lineWidth = 1;
+  } else if (bannerStyle === 'semi') {
+    ctx.fillStyle = hexToRgba(bannerColor, 0.72);
+    roundRect(ctx, bx, bannerY, bw, bannerH, rx); ctx.fill();
+  } else {
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = Math.round(W*0.018); ctx.shadowOffsetY = Math.round(H*0.004);
+    ctx.fillStyle = bannerColor;
+    roundRect(ctx, bx, bannerY, bw, bannerH, rx); ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  }
+
+  ctx.fillStyle = textColor;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = fontWeight + ' ' + fs + 'px ' + fontFamily;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = letterSp + 'px';
+  ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 2; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
+  var ty = bannerY + padV;
+  for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], W/2, ty + (i+0.5)*lineH);
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+
+  var wmFs = Math.round(W * 0.026);
+  ctx.font = wmFs + 'px Georgia,serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(wmText, W/2, H - Math.round(H*0.018));
+
+  return canvas;
+}
+
+function hexToRgba(hex, alpha) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+function isLightColor(hex) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return (r*299 + g*587 + b*114) / 1000 > 128;
+}
+
+async function previewCanvas() {
+  if (!photos.length) { toast('Сначала загрузи фото!'); return; }
+  var titles = document.getElementById('titles').value.split('\n').map(function(t){ return t.trim(); }).filter(Boolean);
+  var title = titles[0] || 'Sample Pin Title';
+  try {
+    var canvas = await renderCanvasPin(title, 400, 600);
+    document.getElementById('prev-img').src = canvas.toDataURL('image/jpeg', 0.9);
+    document.getElementById('prev').style.display = 'block';
+    toast('Предпросмотр готов!');
+  } catch(e) { toast('Ошибка: ' + e.message); }
+}
+
+async function buildCanvasPins() {
+  if (!photos.length) { toast('Загрузи фото!'); return; }
+  var titles = document.getElementById('titles').value.split('\n').map(function(t){ return t.trim(); }).filter(Boolean);
+  if (!titles.length) { toast('Добавь заголовки!'); return; }
+
+  var isBD = document.getElementById('mid').value.startsWith('bytedance:');
+  var W = isBD ? 1600 : 800, H = isBD ? 2400 : 1200;
+
+  busy = true;
+  document.getElementById('bgen').disabled = true;
+  pins = titles.map(function(t, i){ return {id:i,title:t,prompt:'[Canvas]',imageUrl:null,status:'pending',errMsg:''}; });
+  renderGrid();
+  document.getElementById('dct').textContent = '0/' + pins.length;
+
+  document.getElementById('prog').classList.add('on');
+
+  for (var i = 0; i < pins.length; i++) {
+    var pin = pins[i];
+    pin.status = 'generating';
+    patchCard(pin.id);
+    setP('Canvas: ' + (i+1) + ' из ' + pins.length, Math.round(i/pins.length*100), pin.title.slice(0,40));
+    try {
+      collageB64 = null; // rebuild for each pin with same photos
+      var canvas = await renderCanvasPin(pin.title, W, H, null);
+      pin.imageUrl = canvas.toDataURL('image/jpeg', 0.92);
+      pin.status = 'done';
+    } catch(e) { pin.status = 'error'; pin.errMsg = e.message; }
+    patchCard(pin.id);
+    document.getElementById('dct').textContent = (i+1) + '/' + pins.length;
+  }
+
+  setP('✅ Готово!', 100, pins.length + ' пинов создано');
+  toast(pins.length + ' пинов готово! 🎉');
+  busy = false;
+  document.getElementById('bgen').disabled = false;
+}
+
+// ── Card render
+function cardHTML(pin) {
+  var sl = {pending:'ожидание',queued:'в очереди',generating:'⚡ генерирую',done:'✓ готово',error:'ошибка'};
+  var img;
+  if (pin.imageUrl) {
+    img = '<img src="' + esc(pin.imageUrl) + '" alt="" loading="lazy">';
+  } else if (pin.status === 'generating') {
+    img = '<div class="pin-ph"><div class="spin"></div><span>генерирую...</span></div>';
+  } else if (pin.status === 'error') {
+    img = '<div class="pin-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg><span style="color:#c0392b;font-size:10px;word-break:break-word">' + esc(pin.errMsg||'ошибка') + '</span></div>';
+  } else {
+    img = '<div class="pin-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg><span>' + (sl[pin.status]||'ждёт') + '</span></div>';
+  }
+  return '<div class="pin" id="pin-' + pin.id + '">' +
+    '<div class="pin-img">' + img + '<span class="bdg s-' + pin.status + '">' + (sl[pin.status]||pin.status) + '</span></div>' +
+    '<div class="pin-body">' +
+      '<div class="pin-num">#' + (pin.id+1) + '</div>' +
+      '<div class="pin-ttl">' + esc(pin.title) + '</div>' +
+      (pin.prompt && pin.prompt !== '[Canvas]' ? '<button class="ptog" onclick="togglePrompt(' + pin.id + ')">показать промт</button><div class="pbox" id="pb-' + pin.id + '">' + esc(pin.prompt) + '</div>' : '') +
+      '<div class="pin-acts">' +
+        '<button class="btn-rg" onclick="regenPin(' + pin.id + ')"' + (pin.status==='generating'?' disabled':'') + '>↺ regenerate</button>' +
+        (pin.imageUrl ? '<button class="btn-dl" onclick="dlPin(' + pin.id + ')">⬇</button>' : '') +
+      '</div>' +
+    '</div></div>';
+}
+
+function renderGrid() {
+  var g = document.getElementById('grid');
+  if (!pins.length) { g.innerHTML = '<div class="empty"><div style="font-size:40px;margin-bottom:10px">🖼</div><p>Введи заголовки и нажми «Генерировать»</p></div>'; return; }
+  g.innerHTML = pins.map(cardHTML).join('');
+  document.getElementById('bexp').style.display = pins.some(function(p){ return p.prompt && p.prompt !== '[Canvas]'; }) ? '' : 'none';
+}
+
+function patchCard(id) {
+  var pin = pins.find(function(p){ return p.id === id; });
+  if (!pin) return;
+  var old = document.getElementById('pin-' + id);
+  if (!old) { renderGrid(); return; }
+  var tmp = document.createElement('div');
+  tmp.innerHTML = cardHTML(pin);
+  old.replaceWith(tmp.firstElementChild);
+  var done = pins.filter(function(p){ return p.status==='done'; }).length;
+  document.getElementById('dct').textContent = pins.length ? done + '/' + pins.length : '';
+  document.getElementById('bexp').style.display = pins.some(function(p){ return p.prompt && p.prompt !== '[Canvas]'; }) ? '' : 'none';
+}
+
+function togglePrompt(id) {
+  var b = document.getElementById('pb-' + id);
+  if (!b) return;
+  b.classList.toggle('open');
+  b.previousElementSibling.textContent = b.classList.contains('open') ? 'скрыть промт' : 'показать промт';
+}
+
+// ── Claude: get backgrounds
+async function getBackgrounds(titles, bgBase, claudeKey) {
+  var sys = 'For each Pinterest pin title, return a short background scene description (15-20 words) with topic-relevant props. Base style: ' + bgBase + '. Return ONLY valid JSON array: [{"title":"exact","bg":"description"}]. No markdown.';
+  var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body: JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,system:sys,messages:[{role:'user',content:'Titles:\n'+titles.map(function(t,i){return (i+1)+'. '+t;}).join('\n')}]})
+  });
+  if (!resp.ok) throw new Error('Claude ' + resp.status);
+  var data = await resp.json();
+  var txt = data.content.filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
+  return JSON.parse(txt.replace(/```json|```/g,'').trim());
+}
+
+// ── Runware
+async function genImage(prompt, modelId, w, h, rwKey, tmt, seedB64, strength) {
+  var taskUUID = crypto.randomUUID();
+  var isBD = modelId.startsWith('bytedance:');
+  var fw = isBD ? Math.max(parseInt(w),1600) : snapDim(w,128,2048);
+  var fh = isBD ? Math.max(parseInt(h),2400) : snapDim(h,128,2048);
+
+  var task = {taskType:'imageInference',taskUUID:taskUUID,model:modelId,positivePrompt:prompt,width:fw,height:fh,numberResults:1,outputFormat:'PNG',outputType:['URL'],includeCost:true};
+  var isGPT = modelId.startsWith('openai:gpt-image');
+  if (isBD) task.providerSettings = {bytedance:{maxSequentialImages:1}};
+  else if (isGPT) task.providerSettings = {openai:{quality:'medium'}};
+  else if (modelId.indexOf('bfl:') !== 0) { task.steps = 30; task.CFGScale = 4; }
+  var isEdit = isGPT || modelId.indexOf('bfl:') === 0 || modelId === 'bytedance:4@1';
+  if (seedB64 && isEdit) { task.referenceImages = ['data:image/jpeg;base64,' + seedB64]; }
+  else if (seedB64) { task.seedImage = 'data:image/jpeg;base64,' + seedB64; task.strength = parseFloat(strength)||0.3; }
+
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, (parseInt(tmt)||120)*1000);
+  var r, d;
+  try {
+    r = await fetch('https://api.runware.ai/v1', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+rwKey},
+      body:JSON.stringify([task]),
+      signal:ctrl.signal
+    });
+  } catch(e) {
+    clearTimeout(timer);
+    if (e.name==='AbortError') throw new Error('Таймаут ' + tmt + 'с');
+    throw new Error('Сеть/CORS: ' + e.message);
+  }
+  clearTimeout(timer);
+  try { d = await r.json(); } catch(e) { throw new Error('Не JSON, status ' + r.status); }
+  if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + JSON.stringify(d).slice(0,200));
+  if (d.errors && d.errors.length) throw new Error((d.errors[0].message||'error') + ' | code:' + d.errors[0].code);
+  var img = d.data && d.data[0] && (d.data[0].imageURL || d.data[0].imageUrl);
+  if (!img) throw new Error('Нет imageURL: ' + JSON.stringify(d).slice(0,200));
+  return img;
+}
+
+// ── Main AI run
+// ── Pinterest palette system ──────────────────────────────────────────────────
+var HOLIDAY_PALETTES = {
+  'halloween':    'Colour palette: warm cream background, muted pumpkin orange #d98a5c, dusty plum #8a6b8f, soft black. Halloween decor.',
+  'christmas':    'Colour palette: deep pine green #1e5631, cranberry red #a4243b, warm gold #c8a24a, cream. Christmas decor.',
+  'thanksgiving': 'Colour palette: burnt orange #c26b34, deep mustard #d9a441, chestnut brown, cream. Thanksgiving decor.',
+  'valentines':   'Colour palette: soft rose #e8a5b0, cherry red #c8354b, blush, cream. Valentine decor.',
+  'easter':       'Colour palette: soft lilac, mint, butter yellow, sky blue pastels. Easter decor.',
+  'newyear':      'Colour palette: black, champagne gold #c8a24a, silver. New Year decor.',
+};
+var TAILWIND_PAL = 'Use the proven Pinterest palette: a soft light background (e.g. #f5f1ee #f9f5f2 #eae6f7 #efd0d7) paired with ONE bold accent (e.g. #e86a87 #488691 #99b9d0 #dab5f4 #ffae9d), plus dark charcoal text. Soft base + single strong accent, high contrast.';
+var ANTI_YELLOW  = 'Colour grade: clean, crisp, premium colours — NO muddy yellow/amber/sepia cast, no dingy off-white. Whites are clean white. Avoid the cheap warm-yellow AI look.';
+var STYLE_VEC = 'Overall style: MODERN SCANDINAVIAN FOLK ILLUSTRATION, digital gouache. Visual lineage: Marimekko textile prints, Matisse cut-out flat shapes, contemporary Instagram gouache portrait illustrators (the @blissummer / anushkasstudio vibe). Contemporary and grown-up — NOT vintage, NOT retro, NOT a children-book look. Completely FLAT colour fills with NO gradients, no 3D shading, no gloss. Visible grainy paper texture over the whole image. Dusty muted palette: terracotta, sage green, powder pink, cream, clay blue, warm ochre. Feature ONE woman drawn in a simplified stylised way: soft rounded face, thin arched brows, small painted lip shape, and ROUND ROSY RED BLUSHED CHEEKS as flat circles of colour (this cheek blush is essential in every image). VARY her across pins so they never look identical — do NOT default to the same character: give her a DIFFERENT hairstyle each time (loose flowing hair, a bob, a braid, a low bun, a high bun, a ponytail, short hair, curly hair — pick one that fits the headline), a DIFFERENT eye state (often open and looking out, sometimes glancing to the side, occasionally closed), and a DIFFERENT pose and crop (three-quarter view, front-facing, side profile, half-body, seated, holding an object). Her facial EXPRESSION and body language should clearly convey an emotion that fits the headline topic (joyful, excited, calm, cosy, determined, dreamy, playful — whatever matches), not a blank neutral face. Decorative hand-painted flowers, leaves and folk motifs arranged around her as ornament. NOT a Disney/Pixar 3D cartoon, NOT glossy vector clipart, NOT anime, NOT photorealistic. No photograph of a real person.';
+function vecVariety(i,title){var H=['loose flowing hair','a chin-length bob','a side braid','a low bun','a ponytail','short cropped hair','soft curls'];var E=['eyes open looking forward','eyes open glancing to the side','a soft smile with open eyes','calm half-closed eyes'];var P=['front-facing half-body','three-quarter view','side profile','seated relaxed pose'];function pk(a){return a[Math.floor(Math.random()*a.length)];}var emo=emotionForTitle(title||'');return 'For THIS specific pin, draw her with '+pk(H)+', '+pk(E)+', in a '+pk(P)+', showing a '+emo+' expression that matches the headline, distinct from other pins.';}
+function emotionForTitle(t){t=(t||'').toLowerCase();if(/lazy|slump|motivat|productiv|get going|beat|stop|hustle|discipline|goal/.test(t))return 'energised, determined and upbeat';if(/self.?care|relax|cosy|cozy|calm|slow|rest|unwind|peace|mindful|bath|skincare/.test(t))return 'cosy, serene and content';if(/hobby|hobbies|discover|new|try|learn|creative|explore|passion/.test(t))return 'curious and delighted';if(/happy|joy|best|love|glow|confiden|thrive|blossom/.test(t))return 'joyful and radiant';if(/date|romance|feminine|elegant|classy/.test(t))return 'soft, dreamy and confident';if(/tired|stress|anxious|overwhelm|hard|struggle/.test(t))return 'gently hopeful and reassuring';return 'warm, happy and expressive';}
+var STYLE_PHO = 'Overall style: bright high-quality PHOTOREALISTIC flat-lay of themed props and objects, shallow depth of field — NO people, NO faces, objects only. Headline is large and bold with thick contrasting outline for maximum legibility over the photo.';
+var READ_RULE = 'The headline text must be VERY LARGE, bold, high-contrast and instantly readable on a phone screen.';
+
+var PIN_LAYOUTS = [
+  function(t,sc,vb,cta){ return 'Pinterest pin, vertical 2:3. '+sc+' '+vb+' A solid opaque banner panel across the TOP third; on it the headline "'+t+'" in large bold clean sans-serif. A small pill-shaped button in the accent color with white text "'+cta+'" just below headline. '+READ_RULE+' Sharp focus, high quality.'; },
+  function(t,sc,vb,cta){ return 'Pinterest pin, vertical 2:3. '+sc+' '+vb+' A clean rounded banner panel centered; headline "'+t+'" fills it in large bold display font. A small pill-shaped button in the accent color with white text "'+cta+'" just below headline. '+READ_RULE+' Sharp focus, high quality.'; },
+  function(t,sc,vb,cta){ return 'Pinterest pin, vertical 2:3. '+sc+' '+vb+' NO panel — headline "'+t+'" directly over illustration in huge bold hand-lettered type, thick contrasting outline and soft shadow, dynamic layout with varied word sizes. A small pill-shaped button in the accent color with white text "'+cta+'" below. '+READ_RULE+' Sharp focus, high quality.'; },
+  function(t,sc,vb,cta){ return 'Pinterest pin, vertical 2:3. '+sc+' '+vb+' Lower third has strong dark gradient; headline "'+t+'" across the bottom in very large bold sans-serif white. A small pill-shaped button in the accent color with white text "'+cta+'" above headline. '+READ_RULE+' Sharp focus, high quality.'; }
+];
+
+function shuffle(arr){ var a=arr.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+function detectVibe(titles) {
+  var sel = document.getElementById('pin-vibe');
+  if (sel && sel.value !== 'auto') return sel.value;
+  var text = titles.join(' ').toLowerCase();
+  if (/halloween|spooky|pumpkin|ghost|witch/.test(text)) return 'halloween';
+  if (/christmas|xmas|santa|winter/.test(text)) return 'christmas';
+  if (/thanksgiving|turkey|harvest|friendsgiving/.test(text)) return 'thanksgiving';
+  if (/valentine|heart|february/.test(text)) return 'valentines';
+  if (/easter|bunny|egg hunt/.test(text)) return 'easter';
+  if (/new year|nye|countdown/.test(text)) return 'newyear';
+  return 'general';
+}
+
+function getVibeBlock(vibe) {
+  return (HOLIDAY_PALETTES[vibe] || TAILWIND_PAL) + ' ' + ANTI_YELLOW;
+}
+
+async function writePinScenesBatch(batch, vibe, claudeKey) {
+  var sys = 'You create Pinterest pin visuals for a party/lifestyle blog.\nFor each headline return THREE things:\n- "cta": 2-4 word call-to-action for a button (vary, e.g. "Save This Idea", "Get the List", "Try Tonight").\n- "sceneVector": MODERN FLAT EDITORIAL ILLUSTRATION — contemporary vector art, matte muted colours, ONE expressive character with strong positive emotion. NOT Disney/Pixar. No text. 2-3 sentences.\n- "scenePhoto": PHOTOREALISTIC flat-lay — themed props and objects, soft natural light, NO people, NO faces. 2-3 sentences.\nMake all scenes DISTINCT from each other.\nReturn ONLY raw JSON: {"pins":[{"cta":"","sceneVector":"","scenePhoto":""},...]} no preamble.';
+  var userMsg = 'Theme: ' + vibe + '\nHeadlines:\n' + batch.map(function(t,i){ return (i+1)+'. '+t; }).join('\n');
+  var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+    body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens: Math.max(800, batch.length * 200), system:sys, messages:[{role:'user',content:userMsg}] })
+  });
+  if (!resp.ok) { var err = await resp.text(); throw new Error('Claude ' + resp.status + ': ' + err.slice(0,100)); }
+  var data = await resp.json();
+  var text = (data.content||[]).map(function(b){ return b.text||''; }).join('');
+  var clean = text.replace(/```json|```/g,'').trim();
+  return JSON.parse(clean).pins || [];
+}
+
+async function writePinScenes(titles, vibe, claudeKey) {
+  var BATCH = 8;
+  var all = [];
+  for (var i = 0; i < titles.length; i += BATCH) {
+    var batch = titles.slice(i, i + BATCH);
+    var results = await writePinScenesBatch(batch, vibe, claudeKey);
+    all = all.concat(results);
+    setP('Claude пишет сцены...', Math.round((i + BATCH) / titles.length * 30), Math.min(i + BATCH, titles.length) + '/' + titles.length + ' сцен');
+  }
+  return all;
+}
+
+async function runAI() {
+  var ck = document.getElementById('ck').value.trim();
+  var rk = document.getElementById('rk').value.trim();
+  var wmEl = document.getElementById('ai-wm');
+  var wm = wmEl ? wmEl.value.trim() : 'redcheeksgirl.com';
+  var titlesRaw = document.getElementById('titles').value.split('\n').map(function(t){ return t.trim(); }).filter(Boolean).slice(0,80);
+
+  if (!ck) { alert('Введи Anthropic API key!'); return; }
+  if (!rk) { alert('Введи Runware API key!'); return; }
+  if (!titlesRaw.length) { alert('Введи заголовки!'); return; }
+
+  busy = true;
+  document.getElementById('bgen').disabled = true;
+  document.getElementById('prog').classList.add('on');
+  setP('Claude пишет сцены...', 5, titlesRaw.length + ' пинов');
+
+  var vibe = detectVibe(titlesRaw);
+  var vibeBlock = getVibeBlock(vibe);
+  var wmLine = 'At the very bottom center, add a small subtle footer text "' + wm + '" in tiny font.';
+
+  try {
+    var scenes = await writePinScenes(titlesRaw, vibe, ck);
+    var layoutOrder = shuffle([0,1,2,3]);
+    var modeOrder   = shuffle(['vector','photo','vector','photo']);
+
+    pins = [];
+    titlesRaw.forEach(function(title, i) {
+      pins.push({ id:i, title:title, status:'generating', prompt:null, imageUrl:null, cfgIndex:null });
+    });
+    renderGrid();
+    setP('Генерирую пины...', 15, '0/' + titlesRaw.length);
+
+    // Pre-generate rotation sequences for up to 80 pins
+    var allLayouts = [], allModes = [];
+    for (var bi = 0; bi < Math.ceil(titlesRaw.length / 4); bi++) {
+      allLayouts = allLayouts.concat(shuffle([0,1,2,3]));
+      allModes   = allModes.concat(shuffle(['vector','photo','vector','photo']));
+    }
+
+    var jobs = titlesRaw.map(function(title, i) {
+      var sc = scenes[i] || { cta:'Save This', sceneVector:'A calm stylised woman with round rosy cheeks, hand-painted in flat gouache, surrounded by decorative folk flowers', scenePhoto:'A flat-lay of themed objects' };
+      var mode   = allModes[i];
+      var layout = allLayouts[i];
+      var scene  = (mode === 'vector') ? sc.sceneVector : sc.scenePhoto;
+      var style  = (mode === 'vector') ? (STYLE_VEC + ' ' + vecVariety(i, title)) : STYLE_PHO;
+      var prompt = PIN_LAYOUTS[layout](title, scene, vibeBlock + ' ' + style, sc.cta) + ' ' + wmLine;
+      pins[i].prompt = prompt;
+      return { idx:i, prompt:prompt };
+    });
+
+    var done = 0;
+    async function genOne(job) {
+      try {
+        pins[job.idx].imageUrl = await genImage(job.prompt, 'openai:gpt-image@2', 1024, 1536, rk, 120, null, 1);
+        pins[job.idx].status = 'done';
+      } catch(e) {
+        pins[job.idx].status = 'error';
+        pins[job.idx].errMsg = e.message;
+      }
+      done++;
+      patchCard(job.idx);
+      setP('Генерирую...', 15 + Math.round(done/jobs.length*80), done + '/' + jobs.length);
+    }
+
+    // Concurrency pool of 2
+    var pool=2, queue=jobs.slice(), active=0;
+    await new Promise(function(resolve) {
+      function next() {
+        if (!queue.length && active===0) { resolve(); return; }
+        while (active < pool && queue.length) {
+          active++;
+          (function(job){ genOne(job).then(function(){ active--; next(); }); })(queue.shift());
+        }
+      }
+      next();
+    });
+
+    setP('✅ Готово!', 100, done + '/' + jobs.length + ' пинов');
+    document.getElementById('bexp').style.display = 'block';
+    document.getElementById('dct').textContent = pins.filter(function(p){ return p.status==='done'; }).length + '/' + pins.length;
+    toast(done + ' пинов готово! 🎉');
+  } catch(e) {
+    setP('❌ Ошибка: ' + e.message, 0, '');
+    toast('Ошибка: ' + e.message);
+  }
+
+  busy = false;
+  document.getElementById('bgen').disabled = false;
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS TAB: article photos + AI typography
+// ══════════════════════════════════════════════════════════════════
+var articleImgs = [];
+
+async function scrapeArticleImages(url, onNote) {
+  var html = '';
+  var proxies = [
+    { url:'https://corsproxy.io/?url='+encodeURIComponent(url), parse:function(r){return r.text();}, ex:function(t){return t;} },
+    { url:'https://api.allorigins.win/get?url='+encodeURIComponent(url), parse:function(r){return r.json();}, ex:function(d){return d.contents||'';} },
+    { url:'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url), parse:function(r){return r.text();}, ex:function(t){return t;} }
+  ];
+  for (var pi=0; pi<proxies.length; pi++) {
+    try {
+      if (onNote) onNote('Загружаю статью (прокси ' + (pi+1) + ')...');
+      var resp = await fetch(proxies[pi].url, { signal: AbortSignal.timeout(15000) });
+      if (!resp.ok) continue;
+      html = proxies[pi].ex(await proxies[pi].parse(resp));
+      if (html && html.length > 500) break;
+    } catch(e) { continue; }
+  }
+  if (!html) throw new Error('Все прокси недоступны');
+  var doc = new DOMParser().parseFromString(html, 'text/html');
+  var base = new URL(url);
+  var found = [], seen = {};
+  function addUrl(src) {
+    if (!src || src.indexOf('data:') === 0 || src.length < 10) return;
+    try {
+      if (src.indexOf('//') === 0) src = base.protocol + src;
+      else if (src.charAt(0) === '/') src = base.origin + src;
+      else if (src.indexOf('http') !== 0) src = base.origin + '/' + src;
+    } catch(e) { return; }
+    var low = src.toLowerCase();
+    if (/favicon|\/icon[s-]|sprite|\/logo|avatar|gravatar|pixel|blank|placeholder|loading|spinner|emoji|\.svg|\.gif/.test(low)) return;
+    if (/-\d{1,2}x\d{1,2}\./.test(src)) return;
+    var dedup = src.replace(/-\d+x\d+(\.\w+)(\?.*)?$/, '$1$2');
+    if (seen[dedup]) return; seen[dedup] = 1; found.push(src);
+  }
+  function parseSrcset(ss) {
+    var best='', bestW=0;
+    ss.split(',').forEach(function(part){ part=part.trim(); var m=part.match(/^(\S+)\s+(\d+)w/); if (m && parseInt(m[2])>bestW){bestW=parseInt(m[2]);best=m[1];} });
+    return best || ss.split(',')[0].trim().split(/\s/)[0];
+  }
+  var srcAttrs=['src','data-src','data-lazy-src','data-original','data-lazy','data-wpfc-original-src','data-ezsrc','data-original-src','data-full-url'];
+  var setAttrs=['srcset','data-srcset','data-lazy-srcset'];
+  doc.querySelectorAll('img, [data-src], [data-lazy-src]').forEach(function(el){
+    for (var i=0;i<setAttrs.length;i++){ var ss=el.getAttribute(setAttrs[i]); if (ss&&ss.trim()){ addUrl(parseSrcset(ss)); break; } }
+    for (var j=0;j<srcAttrs.length;j++){ var s=el.getAttribute(srcAttrs[j]); if (s&&s.trim()&&s.indexOf('data:')!==0){ addUrl(s); break; } }
+  });
+  doc.querySelectorAll('noscript').forEach(function(el){
+    var m=el.innerHTML.match(/src=["']([^"']+)["']/g);
+    if (m) m.forEach(function(a){ addUrl(a.replace(/src=["']?/,'').replace(/["']$/,'')); });
+  });
+  return found;
+}
+
+async function fetchArticleImages() {
+  var url = document.getElementById('art-url').value.trim();
+  if (!url) { toast('Введи URL статьи!'); return; }
+  if (!url.startsWith('http')) url = 'https://' + url;
+  var btn = document.getElementById('art-btn');
+  var status = document.getElementById('art-status');
+  btn.disabled = true; btn.textContent = '⏳';
+  status.textContent = 'Загружаю статью...';
+  articleImgs = [];
+  document.getElementById('art-imgs').style.display = 'none';
+  document.getElementById('art-add').style.display = 'none';
+  try {
+    var html = '';
+    var proxies = [
+      { url:'https://corsproxy.io/?url='+encodeURIComponent(url), parse:function(r){return r.text();}, ex:function(t){return t;} },
+      { url:'https://api.allorigins.win/get?url='+encodeURIComponent(url), parse:function(r){return r.json();}, ex:function(d){return d.contents||'';} },
+      { url:'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url), parse:function(r){return r.text();}, ex:function(t){return t;} }
+    ];
+    for (var pi=0; pi<proxies.length; pi++) {
+      try {
+        status.textContent = 'Загружаю статью (прокси ' + (pi+1) + ')...';
+        var resp = await fetch(proxies[pi].url, { signal: AbortSignal.timeout(15000) });
+        if (!resp.ok) continue;
+        html = proxies[pi].ex(await proxies[pi].parse(resp));
+        if (html && html.length > 500) break;
+      } catch(e) { continue; }
+    }
+    if (!html) throw new Error('Все прокси недоступны. Попробуй позже.');
+
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var base = new URL(url);
+    var found = [], seen = {};
+
+    function addUrl(src) {
+      if (!src || src.indexOf('data:') === 0 || src.length < 10) return;
+      try {
+        if (src.indexOf('//') === 0) src = base.protocol + src;
+        else if (src.charAt(0) === '/') src = base.origin + src;
+        else if (src.indexOf('http') !== 0) src = base.origin + '/' + src;
+      } catch(e) { return; }
+      var low = src.toLowerCase();
+      if (/favicon|\/icon[s-]|sprite|\/logo|avatar|gravatar|pixel|blank|placeholder|loading|spinner|emoji|\.svg|\.gif/.test(low)) return;
+      if (/-\d{1,2}x\d{1,2}\./.test(src)) return;
+      var dedup = src.replace(/-\d+x\d+(\.\w+)(\?.*)?$/, '$1$2');
+      if (seen[dedup]) return;
+      seen[dedup] = 1;
+      found.push(src);
+    }
+    function parseSrcset(ss) {
+      var best = '', bestW = 0;
+      ss.split(',').forEach(function(part) {
+        part = part.trim();
+        var m = part.match(/^(\S+)\s+(\d+)w/);
+        if (m && parseInt(m[2]) > bestW) { bestW = parseInt(m[2]); best = m[1]; }
+      });
+      return best || ss.split(',')[0].trim().split(/\s/)[0];
+    }
+
+    var srcAttrs = ['src','data-src','data-lazy-src','data-original','data-lazy','data-wpfc-original-src','data-ezsrc','data-original-src','data-full-url'];
+    var setAttrs = ['srcset','data-srcset','data-lazy-srcset'];
+
+    doc.querySelectorAll('img, [data-src], [data-lazy-src]').forEach(function(el) {
+      for (var i=0;i<setAttrs.length;i++) {
+        var ss = el.getAttribute(setAttrs[i]);
+        if (ss && ss.trim()) { addUrl(parseSrcset(ss)); break; }
+      }
+      for (var j=0;j<srcAttrs.length;j++) {
+        var s = el.getAttribute(srcAttrs[j]);
+        if (s && s.trim() && s.indexOf('data:') !== 0) { addUrl(s); break; }
+      }
+    });
+    doc.querySelectorAll('noscript').forEach(function(el) {
+      var m = el.innerHTML.match(/src=["']([^"']+)["']/g);
+      if (m) m.forEach(function(a){ addUrl(a.replace(/src=["']?/,'').replace(/["']$/,'')); });
+    });
+
+    if (!found.length) {
+      status.textContent = '❌ Фото не найдены. Попробуй другую ссылку.';
+    } else {
+      articleImgs = found.slice(0, 30).map(function(u){ return {url:u, sel:false}; });
+      status.textContent = 'Найдено ' + articleImgs.length + ' фото. Выбери нужные:';
+      renderArticleImgs();
+    }
+  } catch(e) {
+    status.textContent = '❌ Ошибка: ' + e.message;
+  }
+  btn.disabled = false; btn.textContent = '📥 Найти';
+}
+
+function renderArticleImgs() {
+  var box = document.getElementById('art-imgs');
+  var html = '';
+  articleImgs.forEach(function(img, i) {
+    html += '<div class="art-img' + (img.sel ? ' sel' : '') + '" onclick="toggleArticleImg(' + i + ')">' +
+            '<img src="' + img.url + '" loading="lazy" onerror="this.closest(\'.art-img\').style.display=\'none\'">' +
+            '<div class="art-img-chk">✓</div></div>';
+  });
+  box.innerHTML = html;
+  box.style.display = 'grid';
+  var selCount = articleImgs.filter(function(i){ return i.sel; }).length;
+  var addBtn = document.getElementById('art-add');
+  addBtn.style.display = selCount > 0 ? 'block' : 'none';
+  addBtn.textContent = '✅ Добавить ' + selCount + ' фото';
+}
+
+function toggleArticleImg(i) {
+  var canAdd = 8 - photos.length;
+  var selCount = articleImgs.filter(function(x){ return x.sel; }).length;
+  if (!articleImgs[i].sel && selCount >= canAdd) { toast('Максимум 8 фото в пуле'); return; }
+  articleImgs[i].sel = !articleImgs[i].sel;
+  renderArticleImgs();
+}
+
+async function imgUrlToDataUrl(url) {
+  // wsrv.nl re-encodes to jpg (handles webp/avif); raw proxies are fallback
+  var imgProxies = [
+    'https://wsrv.nl/?url=' + encodeURIComponent(url) + '&output=jpg&q=90',
+    'https://images.weserv.nl/?url=' + encodeURIComponent(url) + '&output=jpg&q=90',
+    'https://corsproxy.io/?url=' + encodeURIComponent(url),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
+  ];
+  for (var i = 0; i < imgProxies.length; i++) {
+    try {
+      var resp = await fetch(imgProxies[i], { signal: AbortSignal.timeout(20000) });
+      if (!resp.ok) continue;
+      var blob = await resp.blob();
+      if (blob.size < 2000) continue;
+      var dataUrl = await new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function(e){ resolve(e.target.result); };
+        reader.onerror = function(){ reject(new Error('FileReader error')); };
+        reader.readAsDataURL(blob);
+      });
+      // Force everything to JPEG so webp/avif never reaches the image model
+      return await toJpegDataUrl(dataUrl);
+    } catch(e) { continue; }
+  }
+  throw new Error('Не удалось загрузить изображение через прокси');
+}
+
+// Re-encode any data URL (webp/avif/png/etc) to JPEG via canvas
+function toJpegDataUrl(dataUrl) {
+  return new Promise(function(resolve, reject) {
+    if (dataUrl.indexOf('data:image/jpeg') === 0) { resolve(dataUrl); return; }
+    var img = new Image();
+    img.onload = function() {
+      try {
+        var cv = document.createElement('canvas');
+        cv.width = img.naturalWidth || img.width;
+        cv.height = img.naturalHeight || img.height;
+        var ctx = cv.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        ctx.drawImage(img, 0, 0);
+        resolve(cv.toDataURL('image/jpeg', 0.92));
+      } catch(e) { resolve(dataUrl); } // if canvas fails, keep original
+    };
+    img.onerror = function() { resolve(dataUrl); };
+    img.src = dataUrl;
+  });
+}
+
+async function addSelectedArticleImages() {
+  var selected = articleImgs.filter(function(i){ return i.sel; });
+  if (!selected.length) return;
+  var addBtn = document.getElementById('art-add');
+  var status = document.getElementById('art-status');
+  addBtn.disabled = true; addBtn.textContent = '⏳ Загружаю...';
+  var added = 0, failed = 0;
+  for (var i=0;i<selected.length;i++) {
+    if (photos.length >= 8) break;
+    try {
+      status.textContent = 'Загружаю ' + (i+1) + ' из ' + selected.length + '...';
+      photos.push({ dataUrl: await imgUrlToDataUrl(selected[i].url) });
+      collageB64 = null;
+      added++;
+    } catch(e) { failed++; }
+  }
+  renderThumbs();
+  window._artPhotoPool = photos.map(function(p){ return p.dataUrl; });
+  articleImgs.forEach(function(img){ img.sel = false; });
+  addBtn.disabled = false;
+  addBtn.style.display = 'none';
+  var canMore = 8 - photos.length;
+  status.textContent = '✓ ' + added + ' фото добавлено' + (failed ? ' (' + failed + ' не загрузилось)' : '') + (canMore > 0 ? ' · можно ещё ' + canMore : ' · пул заполнен');
+  renderArticleImgs();
+  renderPinConfigs();
+  toast(added + ' фото загружено! 🎉');
+}
+
+function resetArticlePhotos() {
+  photos = [];
+  window._artPhotoPool = [];
+  collageB64 = null;
+  articleImgs = [];
+  pinConfigs.forEach(function(cfg){ cfg.photoIndices = []; });
+  document.getElementById('art-url').value = '';
+  document.getElementById('art-status').textContent = '';
+  document.getElementById('art-imgs').style.display = 'none';
+  document.getElementById('art-add').style.display = 'none';
+  renderThumbs();
+  renderPinConfigs();
+  toast('Фото сброшены — загрузи новую статью');
+}
+
+// ── AI typography styles (GPT Image 2 draws the text onto the real photo)
+var TYPO_STYLES = [
+  // ── Editorial / adult
+  { id:'etna-grotesque', label:'⬛ Etna — крупный гротеск',
+    desc:'Bold contemporary editorial poster lettering: a very large tight grotesque sans-serif (in the spirit of Etna Sans / Helvetica Now Display), set in two or three heavy stacked lines, with a small ALL-CAPS kicker line above in a thin letter-spaced sans. Confident, modern, minimal — no decoration.' },
+  { id:'editorial-caps', label:'📐 Editorial — сериф капсом',
+    desc:'High-fashion magazine typography: a high-contrast serif in ALL CAPS with wide tracking, arranged in tight centred lines that fill the width of the pin. One key line set larger for hierarchy. Sharp, adult, editorial — no panels, no ornaments.' },
+  { id:'condensed-stack', label:'🗞 Condensed — плотный капс',
+    desc:'A bold condensed uppercase sans-serif, tightly stacked in three or four short lines, newspaper-headline energy. One line may sit on a solid accent-colour bar. Clean, punchy, adult.' },
+  { id:'cream-panel', label:'🤍 Кремовая плашка + сериф',
+    desc:'A clean solid cream rectangular panel over the photo, like a printed card laid on the image. The headline on the panel in a high-contrast serif in ALL CAPS, dark ink, generous margins. Calm, editorial, expensive.' },
+  { id:'bottom-gradient', label:'🌑 Градиент снизу + гротеск',
+    desc:'The lower half of the photo carries a strong dark gradient. The headline across it in a very large bold sans-serif in ivory, tightly stacked, with a small letter-spaced ALL-CAPS kicker above. The upper part of the photo stays clean.' },
+  { id:'minimal-top', label:'⬜ Минимал — полоса сверху',
+    desc:'A slim opaque cream band across the TOP of the pin. The headline on it in a refined uppercase serif, dark ink, wide tracking, understated and expensive. The rest of the photo stays clean.' },
+  { id:'outline', label:'🖋 Контурный без плашки',
+    desc:'NO panel — the headline sits directly on the photo in large bold lettering, mostly ALL CAPS. Every letter has a THICK high-contrast outline plus a soft drop shadow, guaranteeing readability over any part of the photo. Dynamic layout with varied word sizes.' },
+  // ── Playful / trend
+  { id:'script-bold', label:'💗 Скрипт + жирный гротеск',
+    desc:'Modern thumbnail mix: exactly ONE emotional word in a flowing brush script as the accent, every other word in a heavy uppercase sans-serif — strong size contrast, dynamic stacked layout. The script word must stay large, clean and uncluttered so it reads instantly. One short word may sit on a small solid chip in the accent colour.' },
+  { id:'retro-groovy', label:'🌻 Retro — groovy 70s',
+    desc:'Retro 70s groovy display lettering: wavy, slightly warped rounded type with a chunky contrasting outline, arranged on gentle curves, plus a couple of small sun-ray or flower accents. Warm and nostalgic but still bold and instantly readable.' },
+  { id:'y2k-chrome', label:'🪩 Y2K — глянец и блики',
+    desc:'Y2K aesthetic lettering: glossy chunky bubble letters with a bright highlight, a strong contrasting outline and a hard offset shadow, plus small sparkle glints. Slightly playful diagonal layout. Loud, fun and extremely legible.' },
+  { id:'marker', label:'🖍 Маркер — рукописный',
+    desc:'Bold handwritten marker lettering for AT MOST ONE key word, with all remaining words in a clean uppercase sans-serif. Underline or circle the marker word with a hand-drawn stroke in the accent colour. Thick contrasting outline and soft shadow on all letters.' }
+];
+
+// Grown-up editorial colour combos (letters / outline / accent) — always high contrast
+var COLOR_COMBOS = [
+  'Letters in warm ivory #f7f3ec with a thin crisp ink-black outline; accent line and chip in oxblood #7a1f2b.',
+  'Letters in clean white with a thin charcoal #2b2b2b outline; accent word and chip in dusty rose #e8a5b0.',
+  'Letters in ink black #1a1a1a with a crisp ivory outline; accent chip in ivory with black text.',
+  'Letters in cream #f5f1ee with a thin terracotta #c26b34 outline; accent chip in terracotta with cream text.',
+  'Letters in ivory with a thin deep espresso brown #4a352b outline; accent word in muted gold #c8a24a.',
+  'Letters in white with a thin sage #488691 outline; accent chip in sage with cream text.',
+  'Letters in soft blush #f2b8c6 with a crisp charcoal outline; a second word in white with the same charcoal outline.',
+  'Letters in ivory with a crisp burgundy #6d2233 outline; accent word in burgundy on a cream chip.',
+  'Letters in white with a thin navy #1f3a5f outline; accent chip in navy with ivory text.',
+  'Letters in butter yellow #f3d07a with a thick charcoal outline; accent chip in cream with charcoal text.',
+  'Letters in coral #ffae9d with a thick charcoal outline; sparkle accents in butter yellow.',
+  'Letters in soft lilac #dab5f4 with a thick charcoal outline; a second word in white; accent chip in cream.'
+];
+
+function pickDistinct(arr, n) {
+  var pool = arr.slice(), out = [];
+  for (var i = 0; i < n && pool.length; i++) out.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+  return out;
+}
+
+// Trendy, high-contrast colour combos (letters / outline / accent) — always readable
+var COLOR_COMBOS = [
+  'Letters in soft blush pink #f2b8c6 with a thick dark charcoal outline; accent chips in cream #f5f1ee; a second word in clean white with the same charcoal outline.',
+  'Letters in clean white with a thick charcoal outline; accent chips and one highlighted word in dusty rose #e8a5b0.',
+  'Letters in butter yellow #f3d07a with a thick charcoal outline; accent chips in cream; one word in white.',
+  'Letters in cream #f5f1ee with a thick terracotta #c26b34 outline; accent chips in terracotta with white text.',
+  'Letters in white with a thick sage green #488691 outline; accent chips in sage with cream text.',
+  'Letters in charcoal #2b2b2b with a thick cream outline; accent chips in soft lilac #dab5f4.',
+  'Letters in soft lilac #dab5f4 with a thick charcoal outline; a second word in white; accent chips in cream.',
+  'Letters in cream with a thick dusty rose #e8a5b0 outline; one oversized word in white with a charcoal outline.',
+  'Letters in coral #ffae9d with a thick charcoal outline; accent chips in cream; sparkle accents in butter yellow.',
+  'Letters in white with a thick powder blue #99b9d0 outline; accent chips in powder blue with charcoal text.'
+];
+
+function pickDistinct(arr, n) {
+  var pool = arr.slice(), out = [];
+  for (var i = 0; i < n && pool.length; i++) out.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+  return out;
+}
+var ANTI_YELLOW_CV = 'Clean crisp premium colours — NO muddy yellow/amber/sepia cast, no aged-paper tint, no cheap warm-yellow AI look.';
+var CANVAS_PALETTE = 'Colour palette for any panels and accents: soft Pinterest palette — light neutral bases (#f5f1ee #f9f5f2 #efd0d7 #e2e1cd) with ONE muted accent (dusty rose #e8a5b0, sage #488691, terracotta #c26b34, soft lilac #dab5f4) and dark charcoal text. Clean crisp premium colours — NO muddy yellow/amber/sepia cast, no aged-paper tint, no cheap warm-yellow AI look.';
+var LEGIBILITY = 'TYPOGRAPHY RULES (strict): script, calligraphy, brush or handwritten lettering may be used for AT MOST ONE word of the headline — every other word must be a clean serif or sans-serif. Never set two script words next to each other. OUTLINE CONTRAST: if the letters are light (ivory, cream, blush, white) the outline MUST be dark (ink black or charcoal); if the letters are dark, the outline MUST be light. Never put a light outline around light letters. Add a soft drop shadow as well, and thicken the outline where the photo behind the text is busy. The headline must occupy at most 60% of the pin height, leaving the outfit clearly visible, and must NOT cover the main subject of the photo (shoes, bag, face). Spell the wording exactly as given.';
+
+function typoById(id) {
+  for (var i=0;i<TYPO_STYLES.length;i++) if (TYPO_STYLES[i].id === id) return TYPO_STYLES[i];
+  return TYPO_STYLES[0];
+}
+
+// ── Claude designs the typography per headline (meaning-driven)
+async function writeCanvasDesigns(titles, claudeKey) {
+  var styleList = TYPO_STYLES.map(function(s){ return '- ' + s.id + ': ' + s.desc; }).join('\n');
+  var comboList = COLOR_COMBOS.map(function(p,i){ return (i+1) + '. ' + p; }).join('\n');
+  var sys = 'You are an art director for trend-forward Pinterest pins (fashion/lifestyle). Each pin is a REAL PHOTOGRAPH with a big headline set on top, in the style of viral TikTok/YouTube fashion thumbnails.\n\nAVAILABLE LETTERING STYLES:\n' + styleList + '\n\nAVAILABLE COLOUR COMBOS:\n' + comboList + '\n\nFor EACH headline pick the lettering style whose mood matches the MEANING of that headline, and pick a colour combo that will read clearly. Use a DIFFERENT style and a DIFFERENT colour combo for each pin.\nReturn per headline:\n- "styleId": exactly one id from the list above\n- "colorIdx": the number of one colour combo\n- "tweak": 1-2 sentences adapting that style to this specific headline (which word is oversized, which word gets a chip, any small accent)\n- "cta": a 2-4 word call-to-action for a small pill button (vary across pins, e.g. "Save This Look", "Shop the Edit", "Get the Outfit")\nReturn ONLY raw JSON: {"pins":[{"styleId":"","colorIdx":1,"tweak":"","cta":""},...]} same order, no preamble.';
+  var userMsg = 'Headlines:\n' + titles.map(function(t,i){ return (i+1)+'. '+t; }).join('\n');
+  var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:1200, system:sys, messages:[{role:'user',content:userMsg}] })
+  });
+  if (!resp.ok) { var e = await resp.text(); throw new Error('Claude ' + resp.status + ': ' + e.slice(0,90)); }
+  var data = await resp.json();
+  var text = (data.content||[]).map(function(b){ return b.text||''; }).join('');
+  return JSON.parse(text.replace(/```json|```/g,'').trim()).pins || [];
+}
+
+// Build photo/collage WITHOUT any text, return base64
+async function buildPhotoBase(cfg, W, H) {
+  var savedPhotos = photos.slice();
+  var savedLayout = layout;
+  if (cfg && cfg.photoIndices && cfg.photoIndices.length && window._artPhotoPool) {
+    photos = cfg.photoIndices
+      .map(function(i){ return window._artPhotoPool[i] ? {dataUrl: window._artPhotoPool[i]} : null; })
+      .filter(Boolean);
+  }
+  if (!photos.length && savedPhotos.length) photos = [savedPhotos[0]];
+  layout = 'grid';
+  var canvas = await buildCollage(W, H);
+  photos = savedPhotos;
+  layout = savedLayout;
+  return canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+}
+
+// ── Generate 4 pins: real photo + AI typography via GPT Image 2
+function isSafetyReject(msg) {
+  var m = (msg || '').toLowerCase();
+  return m.indexOf('safety') > -1 || m.indexOf('rejected') > -1 || m.indexOf('moderation') > -1 || m.indexOf('content policy') > -1;
+}
+
+var MODEL_LABEL = {
+  'openai:gpt-image@2': 'GPT Image 2',
+  'bfl:3@1': 'FLUX Kontext',
+  'bytedance:4@1': 'Seedream 4'
+};
+
+// Try each model in turn; on a safety rejection move to the next one
+async function genWithFallback(prompt, baseB64, rk, chain, onNote) {
+  var lastErr = null;
+  for (var m = 0; m < chain.length; m++) {
+    var model = chain[m];
+    try {
+      if (m > 0 && onNote) onNote('пробую ' + (MODEL_LABEL[model] || model));
+      return await genImage(prompt, model, 1024, 1536, rk, 150, baseB64, 1);
+    } catch (e) {
+      lastErr = e;
+      if (!isSafetyReject(e.message) || m === chain.length - 1) throw e;
+      toast((MODEL_LABEL[model] || model) + ' отклонил фото — беру ' + (MODEL_LABEL[chain[m+1]] || chain[m+1]));
+    }
+  }
+  throw lastErr || new Error('Не удалось сгенерировать');
+}
+
+async function buildAICanvasPins() {
+  if (!photos.length) { toast('Сначала загрузи фото из статьи!'); return; }
+  var rk = document.getElementById('rk').value.trim();
+  if (!rk) { alert('Введи Runware API key (вкладка AI Пины)!'); return; }
+  var titleList = document.getElementById('cv-titles').value.split('\n').map(function(t){return t.trim();}).filter(Boolean);
+  if (!titleList.length) { toast('Добавь заголовки!'); return; }
+
+  var mEl = document.getElementById('cv-mode');
+  var cvMode = mEl ? mEl.value : 'random';
+  var ctaEl = document.getElementById('cv-cta');
+  var wantCta = ctaEl ? ctaEl.checked : true;
+  var ck = document.getElementById('ck').value.trim();
+  if (cvMode === 'claude' && !ck) { alert('Для режима Claude нужен Anthropic API key (вкладка AI Пины)!'); return; }
+
+  var wmEl = document.getElementById('wm');
+  var wm = (wmEl && wmEl.value.trim()) || 'www.somanytrends.com';
+  var wmLine = 'At the very bottom center add a small subtle footer text "' + wm + '" in a tiny unobtrusive font.';
+
+  var count = Math.min(titleList.length, 3);
+  var modelSel = document.getElementById('cv-model');
+  var modelPick = modelSel ? modelSel.value : 'auto';
+  var modelChain = (modelPick === 'auto')
+    ? ['openai:gpt-image@2', 'bfl:3@1', 'bytedance:4@1']
+    : [modelPick];
+  var prog = document.getElementById('prog');
+  if (prog) { prog.style.display = ''; prog.classList.add('on'); }
+
+  // Decide style + colours per pin
+  var designs = [];
+  if (cvMode === 'claude') {
+    setP('Claude подбирает дизайн...', 5, count + ' пинов');
+    try {
+      var res = await writeCanvasDesigns(titleList.slice(0, count), ck);
+      designs = res.map(function(d) {
+        var st = typoById(d.styleId);
+        var ci = (parseInt(d.colorIdx) || 1) - 1;
+        return {
+          style:  st.desc + (d.tweak ? ' ' + d.tweak : ''),
+          colors: COLOR_COMBOS[ci] || COLOR_COMBOS[0],
+          cta:    d.cta || 'Save This Look',
+          name:   st.label
+        };
+      });
+    } catch(e) {
+      toast('Claude: ' + e.message + ' — переключаюсь на рандом');
+      cvMode = 'random';
+    }
+  }
+  if (cvMode === 'random') {
+    var st = pickDistinct(TYPO_STYLES, count);
+    var cl = pickDistinct(COLOR_COMBOS, count);
+    var ctas = pickDistinct(['Save This Look','Shop the Edit','Get the Outfit','See All Looks','Steal This Style','Save for Later'], count);
+    designs = st.map(function(s, i) {
+      return { style: s.desc, colors: cl[i] || COLOR_COMBOS[0], cta: ctas[i] || 'Save This Look', name: s.label };
+    });
+  }
+  if (cvMode === 'manual') {
+    designs = [];
+    for (var i = 0; i < count; i++) {
+      var s = typoById(pinConfigs[i].typo || 'editorial-caps');
+      designs.push({ style: s.desc, colors: COLOR_COMBOS[i % COLOR_COMBOS.length], cta: 'Save This Look', name: s.label });
+    }
+  }
+
+  var newPins = [];
+  for (var i = 0; i < count; i++) {
+    var pin = { id: pins.length + newPins.length, title: titleList[i], status:'generating', prompt:'[AI Canvas]', imageUrl:null, cfgIndex:i };
+    newPins.push(pin); pins.push(pin);
+  }
+  renderGrid();
+
+  for (var i = 0; i < count; i++) {
+    var cfg = pinConfigs[i];
+    var pin = newPins[i];
+    var title = titleList[i];
+    var d = designs[i] || designs[0];
+    setP('Пин ' + (i+1) + '/' + count + ' · ' + (d.name || ''), 10 + Math.round(i/count*85), '«' + title.slice(0,36) + '»');
+    try {
+      var baseB64 = await buildPhotoBase(cfg, 1024, 1536);
+      var ctaLine = wantCta
+        ? 'There MUST also be a small pill-shaped button below the headline, filled with the accent colour, containing the short white text "' + d.cta + '" — a required structural element of the layout, compact but clearly visible.'
+        : '';
+      var prompt = 'Keep this exact photograph completely unchanged — do not redraw, restyle, crop or replace it. ONLY add typography on top of it, turning it into a finished Pinterest pin, vertical 2:3, in the style of a grown-up fashion magazine editorial cover — sophisticated and sharp, never childish or cartoonish. Overlay the headline text "' + title + '". '
+        + d.style + ' ' + LEGIBILITY + ' Colours: ' + d.colors + ' ' + ANTI_YELLOW_CV + ' '
+        + 'The headline must be VERY LARGE, high-contrast and instantly readable on a phone screen, occupying a big share of the pin. Keep the wording exactly as given. '
+        + ctaLine + ' ' + wmLine + ' Sharp, high quality, professional.';
+      pin.prompt = prompt;
+      pin.imageUrl = await genWithFallback(prompt, baseB64, rk, modelChain, function(msg){
+        setP('Пин ' + (i+1) + '/' + count + ' · ' + msg, 10 + Math.round(i/count*85), '«' + title.slice(0,36) + '»');
+      });
+      pin.status = 'done';
+    } catch(e) {
+      pin.status = 'error'; pin.errMsg = e.message;
+    }
+    patchCard(pin.id);
+  }
+
+  var ok = newPins.filter(function(p){ return p.status === 'done'; }).length;
+  setP('✅ Готово!', 100, ok + ' из ' + count + ' пинов');
+  document.getElementById('bexp').style.display = 'block';
+  document.getElementById('dct').textContent = pins.filter(function(p){ return p.status==='done'; }).length + '/' + pins.length;
+  toast(ok + ' пинов готово! ✨');
+}
+
+// ── Fallback: local canvas render (fast, system fonts)
+async function buildBatchCanvasPins() {
+  if (!photos.length) { toast('Загрузи фото!'); return; }
+  var titleList = document.getElementById('cv-titles').value.split('\n').map(function(t){return t.trim();}).filter(Boolean);
+  if (!titleList.length) { toast('Добавь заголовки!'); return; }
+  var count = Math.min(titleList.length, 3);
+  var W = 800, H = 1200;
+  var prog = document.getElementById('prog');
+  if (prog) { prog.style.display = ''; prog.classList.add('on'); }
+
+  var newPins = [];
+  for (var i=0;i<count;i++) {
+    var pin = { id: pins.length + newPins.length, title: titleList[i], status:'generating', prompt:'[Canvas]', imageUrl:null, cfgIndex:i };
+    newPins.push(pin); pins.push(pin);
+  }
+  renderGrid();
+
+  for (var i=0;i<count;i++) {
+    var pin = newPins[i];
+    setP('Пин ' + (i+1) + '/' + count, Math.round(i/count*90)+5, '«' + pin.title.slice(0,40) + '»');
+    try {
+      var canvas = await renderCanvasPin(pin.title, W, H, pinConfigs[i]);
+      pin.imageUrl = canvas.toDataURL('image/jpeg', 0.92);
+      pin.status = 'done';
+    } catch(e) { pin.status = 'error'; pin.errMsg = e.message; }
+    patchCard(pin.id);
+  }
+  var ok = newPins.filter(function(p){ return p.status==='done'; }).length;
+  setP('✅ Готово!', 100, ok + ' из ' + count);
+  document.getElementById('bexp').style.display = 'block';
+  document.getElementById('dct').textContent = pins.filter(function(p){ return p.status==='done'; }).length + '/' + pins.length;
+  toast(ok + ' пинов готово!');
+}
+
+async function regenPin(id) {
+  var pin = pins.find(function(p){ return p.id===id; });
+  if (!pin || !pin.prompt) return;
+
+  if (pin.prompt === '[Canvas]') {
+    pin.status = 'generating'; pin.imageUrl = null; patchCard(id);
+    try {
+      var midEl = document.getElementById('mid');
+      var isBD = midEl && midEl.value.startsWith('bytedance:');
+      var W = isBD?1600:800, H = isBD?2400:1200;
+      // Use stored cfg for this pin
+      var cfg = (pin.cfgIndex !== undefined) ? pinConfigs[pin.cfgIndex] : null;
+      var canvas = await renderCanvasPin(pin.title, W, H, cfg);
+      pin.imageUrl = canvas.toDataURL('image/jpeg', 0.92);
+      pin.status = 'done';
+    } catch(e) { pin.status='error'; pin.errMsg=e.message; }
+    patchCard(id);
+    return;
+  }
+
+  // AI pin regen
+  var rk  = document.getElementById('rk').value.trim();
+  var mid = document.getElementById('mid').value.trim();
+  var iw  = document.getElementById('iw').value.trim();
+  var ih  = document.getElementById('ih').value.trim();
+  var tmt = document.getElementById('tmt').value.trim();
+  var strEl = document.getElementById('str');
+  var strength = strEl ? strEl.value : '0.3';
+  if (!rk) { alert('Введи Runware API key!'); return; }
+  pin.status = 'generating'; pin.imageUrl = null; pin.errMsg = ''; patchCard(id);
+  try {
+    pin.imageUrl = await genImage(pin.prompt, mid, iw, ih, rk, tmt, null, strength);
+    pin.status = pin.imageUrl ? 'done' : 'error';
+  } catch(e) { pin.status='error'; pin.errMsg=e.message; toast('Ошибка: '+e.message); }
+  patchCard(id);
+}
+
+// ── Download
+async function dlPin(id) {
+  var pin = pins.find(function(p){ return p.id===id; });
+  if (!pin || !pin.imageUrl) return;
+  var fname = pin.title.replace(/[^a-z0-9\s]/gi,'').trim().replace(/\s+/g,'-').toLowerCase().slice(0,60) + '.jpg';
+  if (pin.imageUrl.startsWith('data:')) {
+    var a = document.createElement('a'); a.href = pin.imageUrl; a.download = fname; a.click();
+  } else {
+    try {
+      var resp = await fetch(pin.imageUrl);
+      var blob = await resp.blob();
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href=url; a.download=fname; a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
+    } catch(e) { window.open(pin.imageUrl,'_blank'); }
+  }
+}
+
+function exportJSON() {
+  var d = pins.filter(function(p){ return p.prompt && p.prompt!=='[Canvas]'; }).map(function(p){ return {num:p.id+1,title:p.title,prompt:p.prompt,status:p.status,imageUrl:p.imageUrl||null}; });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));
+  a.download = 'pinterest-prompts.json'; a.click();
+  toast('JSON скачан!');
+}
+
+function clearAll() {
+  if (busy) return;
+  pins = [];
+  renderGrid();
+  document.getElementById('prog').classList.remove('on');
+  document.getElementById('dct').textContent = '';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TAB 3 — Batch 1:1 (one title + one photo = one pin)
+// ══════════════════════════════════════════════════════════════════
+var b1Photos = [];      // [{dataUrl}]
+var b1ArticleImgs = [];
+
+function b1Sync() {
+  var n = document.getElementById('b1-titles').value.split('\n').map(function(l){return l.trim();}).filter(Boolean).length;
+  document.getElementById('b1-tcount').textContent = n + ' заголовков';
+  b1RenderPairs();
+}
+
+function b1Titles() {
+  return document.getElementById('b1-titles').value.split('\n').map(function(l){return l.trim();}).filter(Boolean).slice(0,30);
+}
+
+function b1ModeChange() {
+  var mode = document.getElementById('b1-mode').value;
+  document.getElementById('b1-fixed-wrap').style.display = (mode === 'fixed') ? 'block' : 'none';
+}
+
+function b1FillFixedStyles() {
+  var sel = document.getElementById('b1-fixed-style');
+  if (!sel || sel.options.length) return;
+  var html = '';
+  TYPO_STYLES.forEach(function(t){ html += '<option value="' + t.id + '">' + t.label + '</option>'; });
+  sel.innerHTML = html;
+}
+
+function b1RenderPairs() {
+  b1FillFixedStyles();
+  var titles = b1Titles();
+  var box = document.getElementById('b1-pairs');
+  if (!box) return;
+  var n = Math.max(titles.length, b1Photos.length);
+  if (!n) { box.innerHTML = ''; return; }
+  var html = '<div style="font-size:11px;color:var(--txm);font-weight:600;margin:4px 0">Пары ' + Math.min(titles.length, b1Photos.length) + ' / ' + n + ':</div>';
+  for (var i = 0; i < n; i++) {
+    var t = titles[i], ph = b1Photos[i];
+    var ok = t && ph;
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:4px;border:1px solid ' + (ok?'var(--bd)':'#f0c0c0') + ';border-radius:6px;background:' + (ok?'var(--bg)':'#fdf3f3') + '">';
+    html += '<div style="width:22px;height:22px;flex-shrink:0;background:var(--y);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#2a2000">' + (i+1) + '</div>';
+    if (ph) html += '<img src="' + ph.dataUrl + '" style="width:34px;height:46px;object-fit:cover;border-radius:4px;flex-shrink:0">';
+    else html += '<div style="width:34px;height:46px;border-radius:4px;background:#f0c0c0;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#a55">нет фото</div>';
+    html += '<div style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (t?'var(--tx)':'#a55') + '">' + (t || '(нет заголовка)') + '</div>';
+    if (ph) html += '<button onclick="b1DelPhoto(' + i + ')" style="border:none;background:none;cursor:pointer;color:#c55;font-size:14px;flex-shrink:0">✕</button>';
+    html += '</div>';
+  }
+  box.innerHTML = html;
+}
+
+function b1DelPhoto(i) { b1Photos.splice(i, 1); b1RenderPairs(); }
+
+function b1Reset() {
+  b1Photos = []; b1ArticleImgs = [];
+  document.getElementById('b1-url').value = '';
+  document.getElementById('b1-art-status').textContent = '';
+  document.getElementById('b1-art-imgs').style.display = 'none';
+  document.getElementById('b1-art-add').style.display = 'none';
+  b1RenderPairs();
+  toast('Фото сброшены');
+}
+
+function b1AddFiles(files) {
+  var toAdd = Math.min(files.length, 30 - b1Photos.length);
+  for (var i = 0; i < toAdd; i++) {
+    (function(file){
+      var r = new FileReader();
+      r.onload = function(e){ toJpegDataUrl(e.target.result).then(function(j){ b1Photos.push({dataUrl:j}); b1RenderPairs(); }); };
+      r.readAsDataURL(file);
+    })(files[i]);
+  }
+}
+
+async function b1FetchFromArticle() {
+  var url = document.getElementById('b1-url').value.trim();
+  if (!url) { toast('Введи URL статьи!'); return; }
+  if (!url.startsWith('http')) url = 'https://' + url;
+  var btn = document.getElementById('b1-btn');
+  var status = document.getElementById('b1-art-status');
+  btn.disabled = true; btn.textContent = '⏳';
+  status.textContent = 'Загружаю статью...';
+  b1ArticleImgs = [];
+  document.getElementById('b1-art-imgs').style.display = 'none';
+  document.getElementById('b1-art-add').style.display = 'none';
+  try {
+    var found = await scrapeArticleImages(url, function(m){ status.textContent = m; });
+    if (!found.length) { status.textContent = '❌ Фото не найдены.'; }
+    else {
+      b1ArticleImgs = found.slice(0, 30).map(function(u){ return {url:u, sel:false}; });
+      status.textContent = 'Найдено ' + b1ArticleImgs.length + ' фото. Выбери в нужном порядке:';
+      b1RenderArtImgs();
+    }
+  } catch(e) { status.textContent = '❌ ' + e.message; }
+  btn.disabled = false; btn.textContent = '📥 Из статьи';
+}
+
+function b1RenderArtImgs() {
+  var box = document.getElementById('b1-art-imgs');
+  var html = '';
+  b1ArticleImgs.forEach(function(img, i) {
+    var order = img.sel ? (b1SelOrder.indexOf(i) + 1) : '';
+    html += '<div class="art-img' + (img.sel?' sel':'') + '" onclick="b1ToggleArt(' + i + ')">' +
+            '<img src="' + img.url + '" loading="lazy" onerror="this.closest(\'.art-img\').style.display=\'none\'">' +
+            '<div class="art-img-chk">' + (order || '✓') + '</div></div>';
+  });
+  box.innerHTML = html; box.style.display = 'grid';
+  var sel = b1ArticleImgs.filter(function(x){ return x.sel; }).length;
+  var add = document.getElementById('b1-art-add');
+  add.style.display = sel ? 'block' : 'none';
+  add.textContent = '✅ Добавить ' + sel + ' фото (по порядку)';
+}
+
+var b1SelOrder = [];
+function b1ToggleArt(i) {
+  if (b1ArticleImgs[i].sel) {
+    b1ArticleImgs[i].sel = false;
+    b1SelOrder = b1SelOrder.filter(function(x){ return x !== i; });
+  } else {
+    if (b1Photos.length + b1SelOrder.length >= 30) { toast('Максимум 30 фото'); return; }
+    b1ArticleImgs[i].sel = true;
+    b1SelOrder.push(i);
+  }
+  b1RenderArtImgs();
+}
+
+async function b1AddSelected() {
+  var add = document.getElementById('b1-art-add');
+  var status = document.getElementById('b1-art-status');
+  add.disabled = true; add.textContent = '⏳ Загружаю...';
+  var ok = 0, fail = 0;
+  for (var k = 0; k < b1SelOrder.length; k++) {
+    if (b1Photos.length >= 30) break;
+    status.textContent = 'Загружаю ' + (k+1) + '/' + b1SelOrder.length + '...';
+    try { b1Photos.push({ dataUrl: await imgUrlToDataUrl(b1ArticleImgs[b1SelOrder[k]].url) }); ok++; }
+    catch(e) { fail++; }
+  }
+  b1SelOrder = [];
+  b1ArticleImgs.forEach(function(x){ x.sel = false; });
+  add.disabled = false; add.style.display = 'none';
+  document.getElementById('b1-art-imgs').style.display = 'none';
+  status.textContent = '✓ ' + ok + ' добавлено' + (fail ? ' (' + fail + ' не удалось)' : '');
+  b1RenderPairs();
+  toast(ok + ' фото добавлено!');
+}
+
+async function b1AddUrls() {
+  var raw = document.getElementById('b1-urls').value.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  if (!raw.length) { toast('Вставь URL фото!'); return; }
+  var btn = document.getElementById('b1-urls-btn');
+  var status = document.getElementById('b1-urls-status');
+  btn.disabled = true; btn.textContent = '⏳ Загружаю...';
+  var ok = 0, fail = 0, failedUrls = [];
+  for (var i = 0; i < raw.length; i++) {
+    if (b1Photos.length >= 30) { toast('Достигнут максимум 30 фото'); break; }
+    var u = raw[i];
+    if (u.indexOf('http') !== 0) u = 'https://' + u;
+    status.textContent = 'Загружаю ' + (i+1) + ' / ' + raw.length + '...';
+    try {
+      b1Photos.push({ dataUrl: await imgUrlToDataUrl(u) });
+      ok++;
+    } catch(e) { fail++; failedUrls.push(u); }
+    b1RenderPairs();
+  }
+  btn.disabled = false; btn.textContent = '📥 Подтянуть фото по URL';
+  status.textContent = '✓ ' + ok + ' добавлено' + (fail ? ' · ' + fail + ' не удалось' : '');
+  if (ok) {
+    // keep only failed urls in the box so the user can retry them
+    document.getElementById('b1-urls').value = failedUrls.join('\n');
+  }
+  toast(ok + ' фото подтянуто!' + (fail ? ' (' + fail + ' с ошибкой)' : ''));
+}
+
+async function runBatch1() {
+  var rk = document.getElementById('rk').value.trim();
+  if (!rk) { alert('Введи Runware API key (вкладка AI Пины)!'); return; }
+  var titles = b1Titles();
+  if (!titles.length) { toast('Добавь заголовки!'); return; }
+  if (!b1Photos.length) { toast('Добавь фото!'); return; }
+
+  var count = Math.min(titles.length, b1Photos.length);
+  if (count < titles.length || count < b1Photos.length)
+    if (!confirm('Заголовков ' + titles.length + ', фото ' + b1Photos.length + '. Сгенерирую ' + count + ' пар. Продолжить?')) return;
+
+  var mode = document.getElementById('b1-mode').value;
+  var ck = document.getElementById('ck').value.trim();
+  if (mode === 'claude' && !ck) { alert('Для режима Claude нужен Anthropic API key!'); return; }
+
+  var wm = document.getElementById('b1-wm').value.trim() || 'www.somanytrends.com';
+  var wmLine = 'At the very bottom center add a small subtle footer text "' + wm + '" in a tiny unobtrusive font.';
+  var wantCta = document.getElementById('b1-cta').checked;
+  var modelPick = document.getElementById('b1-model').value;
+  var chain = (modelPick === 'auto') ? ['openai:gpt-image@2','bfl:3@1','bytedance:4@1'] : [modelPick];
+
+  var prog = document.getElementById('prog');
+  if (prog) { prog.style.display = ''; prog.classList.add('on'); }
+
+  // Decide styles
+  var designs = [];
+  if (mode === 'claude') {
+    setP('Claude подбирает стиль...', 3, count + ' пинов');
+    try {
+      var res = await writeCanvasDesigns(titles.slice(0, count), ck);
+      designs = res.map(function(d){
+        var st = typoById(d.styleId);
+        var ci = (parseInt(d.colorIdx)||1) - 1;
+        return { style: st.desc + (d.tweak ? ' ' + d.tweak : ''), colors: COLOR_COMBOS[ci] || COLOR_COMBOS[0], cta: d.cta || 'Save This Look' };
+      });
+    } catch(e) { toast('Claude: ' + e.message + ' — беру рандом'); mode = 'random'; }
+  }
+  if (mode === 'random') {
+    for (var i = 0; i < count; i++) {
+      var s = TYPO_STYLES[Math.floor(Math.random()*TYPO_STYLES.length)];
+      var cl = COLOR_COMBOS[Math.floor(Math.random()*COLOR_COMBOS.length)];
+      designs.push({ style: s.desc, colors: cl, cta: 'Save This Look' });
+    }
+  }
+  if (mode === 'fixed') {
+    var fs = typoById(document.getElementById('b1-fixed-style').value);
+    for (var i = 0; i < count; i++)
+      designs.push({ style: fs.desc, colors: COLOR_COMBOS[i % COLOR_COMBOS.length], cta: 'Save This Look' });
+  }
+
+  var newPins = [];
+  for (var i = 0; i < count; i++) {
+    var pin = { id: pins.length + newPins.length, title: titles[i], status:'generating', prompt:'[Batch1:1]', imageUrl:null };
+    newPins.push(pin); pins.push(pin);
+  }
+  renderGrid();
+
+  for (var i = 0; i < count; i++) {
+    var pin = newPins[i];
+    var title = titles[i];
+    var d = designs[i] || designs[0];
+    setP('Пин ' + (i+1) + '/' + count, 5 + Math.round(i/count*90), '«' + title.slice(0,36) + '»');
+    try {
+      var baseB64 = b1Photos[i].dataUrl.split(',')[1];
+      var ctaLine = wantCta
+        ? 'There MUST be a small pill-shaped button below the headline, filled with the accent colour, with the short white text "' + d.cta + '" — a required structural element, compact but visible.'
+        : '';
+      var prompt = 'Keep this exact photograph completely unchanged — do not redraw, restyle, crop or replace it. ONLY add typography on top of it, turning it into a finished Pinterest pin, vertical 2:3, in the style of a grown-up fashion magazine editorial cover. Overlay the headline text "' + title + '". '
+        + d.style + ' ' + LEGIBILITY + ' Colours: ' + d.colors + ' ' + ANTI_YELLOW_CV + ' '
+        + 'The headline must be VERY LARGE, high-contrast and instantly readable on a phone. '
+        + ctaLine + ' ' + wmLine + ' Sharp, high quality, professional.';
+      pin.prompt = prompt;
+      pin.imageUrl = await genWithFallback(prompt, baseB64, rk, chain, function(msg){
+        setP('Пин ' + (i+1) + '/' + count + ' · ' + msg, 5 + Math.round(i/count*90), '«' + title.slice(0,32) + '»');
+      });
+      pin.status = 'done';
+    } catch(e) { pin.status = 'error'; pin.errMsg = e.message; }
+    patchCard(pin.id);
+  }
+
+  var ok = newPins.filter(function(p){ return p.status==='done'; }).length;
+  setP('✅ Готово!', 100, ok + ' из ' + count + ' пинов');
+  document.getElementById('bexp').style.display = 'block';
+  document.getElementById('dct').textContent = pins.filter(function(p){ return p.status==='done'; }).length + '/' + pins.length;
+  toast(ok + ' пинов готово! ✨');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// Persistence: remember API keys + settings in this browser
+// ══════════════════════════════════════════════════════════════════
+var REMEMBER = ['ck','rk','ai-wm','wm','cv-mode','cv-model','pin-vibe','b1-wm','b1-mode','b1-model'];
+
+function loadSettings() {
+  REMEMBER.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var v = localStorage.getItem('pg_' + id);
+    if (v !== null && v !== '') el.value = v;
+    var evt = (el.tagName === 'SELECT') ? 'change' : 'input';
+    el.addEventListener(evt, function() {
+      try { localStorage.setItem('pg_' + id, el.value); } catch(e) {}
+    });
+  });
+  updateKeyBadge();
+}
+
+function forgetKeys() {
+  if (!confirm('Удалить сохранённые ключи из этого браузера?')) return;
+  REMEMBER.forEach(function(id){ localStorage.removeItem('pg_' + id); });
+  ['ck','rk'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  updateKeyBadge();
+  toast('Ключи удалены из браузера');
+}
+
+function updateKeyBadge() {
+  var badge = document.getElementById('key-badge');
+  if (!badge) return;
+  var ck = document.getElementById('ck'), rk = document.getElementById('rk');
+  var saved = (ck && ck.value) || (rk && rk.value);
+  badge.innerHTML = saved
+    ? '🔒 Ключи сохранены в этом браузере · <a href="#" onclick="forgetKeys();return false;" style="color:var(--txm);text-decoration:underline">забыть</a>'
+    : 'Ключи сохранятся в этом браузере и подставятся в следующий раз';
+}
+
+// ── Boot
+document.addEventListener('DOMContentLoaded', function() {
+  loadSettings();
+  ['ck','rk'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateKeyBadge);
+  });
+  renderPinConfigs();
+  syncCvTitles();
+  b1Sync();
+  b1ModeChange();
+  // drag & drop for batch1
+  var dz = document.getElementById('b1-drop');
+  if (dz) {
+    ['dragover','dragenter'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.style.borderColor='var(--y)'; }); });
+    ['dragleave','drop'].forEach(function(ev){ dz.addEventListener(ev, function(e){ e.preventDefault(); dz.style.borderColor='var(--bd)'; }); });
+    dz.addEventListener('drop', function(e){ if (e.dataTransfer && e.dataTransfer.files) b1AddFiles(e.dataTransfer.files); });
+  }
+});
+</script>
+</body>
+</html>
